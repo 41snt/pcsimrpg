@@ -3,27 +3,34 @@ using System.Collections.Generic;
 
 public class PlayerHealth : MonoBehaviour
 {
+
+    public DamagePopup damagePopup;
     public int maxHealth = 100;
     public int currentHealth;
 
-    public Health healthBar;
-    public int damagePerEnemy = 10; // Damage per enemy per tick
-    public float damageInterval = 1f; // Time between damage ticks
+    public Health healthBar; // Drag the UI Canvas/Object with the Health script here
+
+    public int damagePerEnemy = 10;
+    public float damageInterval = 1f;
 
     private float damageTimer = 0f;
-    private Vector3 startPosition; // Respawn position
-    private List<GameObject> touchingEnemies = new List<GameObject>(); // Track enemies touching player
+    private Vector3 startPosition;
+    private List<GameObject> touchingEnemies = new List<GameObject>();
 
     void Start()
     {
         currentHealth = maxHealth;
-        healthBar.SetMaxHealth(maxHealth);
         startPosition = transform.position;
+
+        if (healthBar != null)
+        {
+            healthBar.SetMaxHealth(maxHealth);
+        }
     }
 
     void Update()
     {
-        // Apply continuous damage based on number of enemies touching
+        // Continuous damage from enemies touching
         if (touchingEnemies.Count > 0)
         {
             damageTimer += Time.deltaTime;
@@ -36,46 +43,46 @@ public class PlayerHealth : MonoBehaviour
             }
         }
 
-        // Test damage manually
+        // Spacebar test
         if (Input.GetKeyDown(KeyCode.Space))
         {
             TakeDamage(20);
         }
     }
 
-    void TakeDamage(int damage)
+    public void TakeDamage(int damage)
     {
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        healthBar.SetHealth(currentHealth);
 
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
+        if (healthBar != null) healthBar.SetHealth(currentHealth);
+
+        // TRIGGER THE INDICATOR HERE
+        if (damagePopup != null) damagePopup.ShowDamage(damage);
+
+        if (currentHealth <= 0) Die();
     }
-
     void Die()
     {
         Debug.Log("Player Dead!");
-
-        // Reset position
         transform.position = startPosition;
-
-        // Reset health
         currentHealth = maxHealth;
-        healthBar.SetHealth(currentHealth);
 
-        // Clear touching enemies so damage stops
+        if (healthBar != null)
+        {
+            healthBar.SetHealth(currentHealth);
+        }
+
         touchingEnemies.Clear();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // IMPORTANT: Your Enemy Prefabs must be tagged "Enemy"
         if (collision.gameObject.CompareTag("Enemy") && !touchingEnemies.Contains(collision.gameObject))
         {
             touchingEnemies.Add(collision.gameObject);
-            damageTimer = 0f; // Reset timer when new enemy touches
+            damageTimer = 0f;
         }
     }
 

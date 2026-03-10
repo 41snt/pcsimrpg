@@ -1,49 +1,63 @@
 using UnityEngine;
+using System.Collections;
 
 public class EnemySpawnerScript : MonoBehaviour
 {
+    [Header("Continuous Spawning (New Enemies)")]
     public GameObject enemyPrefab;
-    public float spawnInterval = 2f;
-    public float spawnDistance = 10f; // How far from center enemies spawn
+    public Transform spawnPoint;
+    public float spawnInterval = 5.0f; // A new enemy every 5 seconds
 
-    private float timer;
+    [Header("Respawn Settings (Dead Enemies)")]
+    public float respawnDelay = 10.0f; // Dead ones come back after 10 seconds
 
-    void Update()
+    private void Start()
     {
-        timer += Time.deltaTime;
-
-        if (timer >= spawnInterval)
+        if (enemyPrefab != null)
         {
-            SpawnEnemy();
-            timer = 0f;
+            // Start the infinite loop for BRAND NEW enemies
+            StartCoroutine(ContinuousSpawnRoutine());
+        }
+        else
+        {
+            Debug.LogError("Please drag the Enemy Prefab into the Spawner slot!");
         }
     }
 
-    void SpawnEnemy()
+    // This loop runs forever to keep the world full
+    IEnumerator ContinuousSpawnRoutine()
     {
-        Vector2 spawnPosition = Vector2.zero;
-
-        int side = Random.Range(0, 4); // 0=Top, 1=Bottom, 2=Left, 3=Right
-
-        switch (side)
+        while (true)
         {
-            case 0: // Top
-                spawnPosition = new Vector2(Random.Range(-8f, 8f), spawnDistance);
-                break;
-
-            case 1: // Bottom
-                spawnPosition = new Vector2(Random.Range(-8f, 8f), -spawnDistance);
-                break;
-
-            case 2: // Left
-                spawnPosition = new Vector2(-spawnDistance, Random.Range(-4f, 4f));
-                break;
-
-            case 3: // Right
-                spawnPosition = new Vector2(spawnDistance, Random.Range(-4f, 4f));
-                break;
+            SpawnNewEnemy();
+            yield return new WaitForSeconds(spawnInterval);
         }
+    }
 
-        Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+    void SpawnNewEnemy()
+    {
+        if (enemyPrefab != null && spawnPoint != null)
+        {
+            GameObject newEnemy = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
+            EnemyHealth health = newEnemy.GetComponent<EnemyHealth>();
+            if (health != null) health.spawner = this;
+        }
+    }
+
+    // This is called by an enemy when it "dies"
+    public void RequestRespawn(GameObject enemyToRespawn)
+    {
+        StartCoroutine(RespawnTimer(enemyToRespawn));
+    }
+
+    IEnumerator RespawnTimer(GameObject enemy)
+    {
+        yield return new WaitForSeconds(respawnDelay);
+
+        if (enemy != null && spawnPoint != null)
+        {
+            enemy.transform.position = spawnPoint.position;
+            enemy.SetActive(true); // Turn the dead one back on
+        }
     }
 }

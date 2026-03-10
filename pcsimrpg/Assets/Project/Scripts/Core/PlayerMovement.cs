@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -9,10 +7,31 @@ public class PlayerMovement : MonoBehaviour
     public VirtualJoystick joystick;
 
     private Vector2 moveInput;
+    private Animator animator;
+
+    void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
 
     void Update()
     {
         moveInput = joystick.GetInput();
+
+        if (moveInput.x > 0.1f)
+        {
+            animator.speed = 1f;
+            animator.Play("RightRun");
+        }
+        else if (moveInput.x < -0.1f)
+        {
+            animator.speed = 1f;
+            animator.Play("LeftRun");
+        }
+        else
+        {
+            animator.speed = 0f;
+        }
     }
 
     void FixedUpdate()
