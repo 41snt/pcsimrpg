@@ -12,6 +12,7 @@ public class ActionButtonController : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private PlayerInteraction playerInteraction;
+    [SerializeField] private PlayerMeleeAttack playerAttack;
 
     private Button button;
 
@@ -33,27 +34,25 @@ public class ActionButtonController : MonoBehaviour
     private void Update()
     {
         if (playerInteraction.Current != null)
+        {
             SetInteractMode();
+        }
         else
+        {
             SetAttackMode();
+        }
     }
 
     private void SetAttackMode()
     {
-        if (!attackLogo.activeSelf)
-        {
-            attackLogo.SetActive(true);
-            interactLogo.SetActive(false);
-        }
+        attackLogo.SetActive(true);
+        interactLogo.SetActive(false);
     }
 
     private void SetInteractMode()
     {
-        if (!interactLogo.activeSelf)
-        {
-            interactLogo.SetActive(true);
-            attackLogo.SetActive(false);
-        }
+        attackLogo.SetActive(false);
+        interactLogo.SetActive(true);
     }
 
     private void OnActionPressed()
@@ -62,15 +61,13 @@ public class ActionButtonController : MonoBehaviour
         {
             playerInteraction.Current.Interact();
         }
+        else if (playerInteraction.CurrentEnemy != null)
+        {
+            playerAttack.Attack();
+        }
         else
         {
-            Attack();
+            playerAttack.Attack();
         }
-    }
-
-    private void Attack()
-    {
-        Debug.Log("Player attacks");
-        // Hook into combat later
     }
 }
