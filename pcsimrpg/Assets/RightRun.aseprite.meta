@@ -140,18 +140,18 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 1, y: 4}
   spriteSheetImportData:
-  - name: RightRun1
+  - name: RightRun_0
     originalName: 
-    pivot: {x: 0, y: 1}
-    alignment: 1
+    pivot: {x: 0, y: 0}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 0
+      x: 6
       y: 133
-      width: 32
-      height: 32
-    spriteID: 9824aca6c25f0494ab0da10dbb48dd96
+      width: 23
+      height: 29
+    spriteID: 5b45fddb05055824ab7023fe7c1d876a
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -160,18 +160,18 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
-  - name: RightRun2
+  - name: RightRun_1
     originalName: 
-    pivot: {x: 0, y: 1}
-    alignment: 1
+    pivot: {x: 0, y: 0}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 0
+      x: 6
       y: 101
-      width: 32
-      height: 32
-    spriteID: 427fba36548a00e4a87ba1e4f12c3b45
+      width: 23
+      height: 29
+    spriteID: 339d8396352d57d49b8ef97435731195
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -180,18 +180,18 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
-  - name: RightRun3
+  - name: RightRun_2
     originalName: 
-    pivot: {x: 0, y: 1}
-    alignment: 1
+    pivot: {x: 0, y: 0}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 0
+      x: 6
       y: 69
-      width: 32
-      height: 32
-    spriteID: ce1290db901b4d7478bc70eedbdc757b
+      width: 23
+      height: 29
+    spriteID: d4749730b0d08d44880077fae19be7e6
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -200,18 +200,18 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
-  - name: RightRun4
+  - name: RightRun_3
     originalName: 
-    pivot: {x: 0, y: 1}
-    alignment: 1
+    pivot: {x: 0, y: 0}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 1
-      y: 36
-      width: 32
-      height: 32
-    spriteID: 0e399b3e6cf9a9a4d9b02601f1f69a22
+      x: 4
+      y: 37
+      width: 26
+      height: 29
+    spriteID: 5aeba9b2ddff96144819b0b6c210db7a
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -220,18 +220,18 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
-  - name: RightRun5
+  - name: RightRun_4
     originalName: 
-    pivot: {x: 0, y: 1}
-    alignment: 1
+    pivot: {x: 0, y: 0}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 0
-      y: 5
-      width: 32
-      height: 32
-    spriteID: f668b6c27a4c77f40835a38b67f7c1f7
+      x: 5
+      y: 4
+      width: 24
+      height: 30
+    spriteID: a25647b8f7b8a9642a7f4ea07d32bb07
     spriteBone: []
     spriteOutline: []
     vertices: []

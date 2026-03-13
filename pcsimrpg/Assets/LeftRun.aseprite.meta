@@ -140,18 +140,18 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 1, y: 3}
   spriteSheetImportData:
-  - name: LeftRun1
+  - name: LeftRun_0
     originalName: 
-    pivot: {x: 0, y: 1}
-    alignment: 1
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 0
+      x: 5
       y: 132
-      width: 32
-      height: 32
-    spriteID: 57b4c9fa6b23595458558434b83ffcc0
+      width: 23
+      height: 29
+    spriteID: 065c89da369326e4dbecfae22f45e253
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -160,18 +160,18 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
-  - name: LeftRun2
+  - name: LeftRun_1
     originalName: 
-    pivot: {x: 0, y: 1}
-    alignment: 1
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 1
+      x: 5
       y: 100
-      width: 32
-      height: 32
-    spriteID: 80f539f0e9f3d4041920c5af49e739ba
+      width: 23
+      height: 29
+    spriteID: bf75cc839eb81b8479c9d15089f73d2e
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -180,18 +180,18 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
-  - name: LeftRun3
+  - name: LeftRun_2
     originalName: 
-    pivot: {x: 0, y: 1}
-    alignment: 1
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 0
+      x: 5
       y: 68
-      width: 32
-      height: 32
-    spriteID: 55a5e56eb05d7c646a8ecef8be759f09
+      width: 23
+      height: 29
+    spriteID: 92548575306e6f042af94ba6b84a7db2
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -200,18 +200,18 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
-  - name: LeftRun4
+  - name: LeftRun_3
     originalName: 
-    pivot: {x: 0, y: 1}
-    alignment: 1
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 0
+      x: 4
       y: 36
-      width: 32
-      height: 32
-    spriteID: ce71f39e7a2061745a79cd47747f490a
+      width: 26
+      height: 29
+    spriteID: b1769ff5d7cb6ac4b8964a0faf76fefb
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -220,18 +220,18 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
-  - name: LeftRun5
+  - name: LeftRun_4
     originalName: 
-    pivot: {x: 0, y: 1}
-    alignment: 1
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 0
+      x: 5
       y: 4
-      width: 32
-      height: 32
-    spriteID: b16e56efc669f3545bb99c8f24cd4690
+      width: 24
+      height: 29
+    spriteID: 6268892295e54b3439eabfcdca09d43e
     spriteBone: []
     spriteOutline: []
     vertices: []

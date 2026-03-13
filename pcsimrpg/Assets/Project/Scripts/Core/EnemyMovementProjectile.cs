@@ -37,8 +37,7 @@ public class EnemyMovementProjectile : MonoBehaviour
 
         if (touchingPlayer)
         {
-            // Stick to player instead of moving away
-            transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.fixedDeltaTime);
+            rb.velocity = Vector2.zero;
             moveDirection = Vector2.zero;
             return;
         }
@@ -102,6 +101,7 @@ public class EnemyMovementProjectile : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             touchingPlayer = true;
+            rb.velocity = Vector2.zero;
         }
     }
 

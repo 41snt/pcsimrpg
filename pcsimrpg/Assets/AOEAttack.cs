@@ -3,9 +3,13 @@ using UnityEngine;
 public class AOEAttack : MonoBehaviour
 {
     public CircleCollider2D aoeCollider;
+
+    public Transform aoeVisual;   // electric circle sprite
+
     public float maxRadius = 4f;
     public float expandSpeed = 3f;
     public float attackCooldown = 5f;
+
     public int damage = 15;
 
     float currentRadius = 0f;
@@ -19,6 +23,9 @@ public class AOEAttack : MonoBehaviour
 
         aoeCollider.isTrigger = true;
         aoeCollider.radius = 0f;
+
+        if (aoeVisual != null)
+            aoeVisual.localScale = Vector3.zero;
     }
 
     void Update()
@@ -28,6 +35,9 @@ public class AOEAttack : MonoBehaviour
         if (!attacking && cooldownTimer >= attackCooldown)
         {
             attacking = true;
+
+            if (aoeVisual != null)
+                aoeVisual.gameObject.SetActive(true);
         }
 
         if (attacking)
@@ -39,16 +49,35 @@ public class AOEAttack : MonoBehaviour
     void ExpandAOE()
     {
         currentRadius += expandSpeed * Time.deltaTime;
+
         aoeCollider.radius = currentRadius;
+
+        // Scale visual circle
+        if (aoeVisual != null)
+        {
+            float size = currentRadius * 2f;
+            aoeVisual.localScale = new Vector3(size, size, 1f);
+        }
 
         if (currentRadius >= maxRadius)
         {
             DamagePlayersInside();
 
-            currentRadius = 0f;
-            aoeCollider.radius = 0f;
-            cooldownTimer = 0f;
-            attacking = false;
+            ResetAOE();
+        }
+    }
+
+    void ResetAOE()
+    {
+        currentRadius = 0f;
+        aoeCollider.radius = 0f;
+        cooldownTimer = 0f;
+        attacking = false;
+
+        if (aoeVisual != null)
+        {
+            aoeVisual.localScale = Vector3.zero;
+            aoeVisual.gameObject.SetActive(false);
         }
     }
 

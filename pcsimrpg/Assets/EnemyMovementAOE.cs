@@ -2,51 +2,48 @@ using UnityEngine;
 
 public class EnemyMovementAOE : MonoBehaviour
 {
-    public float speed = 2.5f;
-    public float stopDistance = 1f;
+    public Transform player;
+    public float speed = 2f;
+    public float attackRange = 2f;
 
-    private Transform player;
-    private Rigidbody2D rb;
+    EnemyAOEAttack aoeAttack;
 
     void Start()
     {
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        // Automatically find the AOE script on this enemy
+        aoeAttack = GetComponent<EnemyAOEAttack>();
 
-        if (playerObj != null)
-            player = playerObj.transform;
-
-        rb = GetComponent<Rigidbody2D>();
-
-        if (rb != null)
-            rb.gravityScale = 0f;
+        if(player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player").transform;
+        }
     }
 
     void FixedUpdate()
     {
-        if (player == null || rb == null) return;
+        if(player == null) return;
 
-        float distance = Vector2.Distance(rb.position, player.position);
+        float distance = Vector2.Distance(transform.position, player.position);
 
-        if (distance > stopDistance)
+        if(distance > attackRange)
         {
-            Vector2 direction = (player.position - transform.position).normalized;
-            rb.MovePosition(rb.position + direction * speed * Time.fixedDeltaTime);
+            transform.position = Vector2.MoveTowards(
+                transform.position,
+                player.position,
+                speed * Time.deltaTime
+            );
         }
-
-        FacePlayer();
+        else
+        {
+            StopAndAttack();
+        }
     }
 
-    void FacePlayer()
+    void StopAndAttack()
     {
-        if (player == null) return;
-
-        Vector3 scale = transform.localScale;
-
-        if (player.position.x > transform.position.x)
-            scale.x = Mathf.Abs(scale.x);
-        else
-            scale.x = -Mathf.Abs(scale.x);
-
-        transform.localScale = scale;
+        if(aoeAttack != null)
+        {
+            aoeAttack.StartAOE();
+        }
     }
 }

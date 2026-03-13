@@ -1,42 +1,56 @@
 using UnityEngine;
 
-public class EnemyHealth : MonoBehaviour, IInteractable
+public class EnemyHealth : MonoBehaviour
 {
-    [Header("Health Settings")]
-    public int maxHealth = 100;
-    public int currentHealth; // Public so the HealthBar script can see it
+    public int maxHealth = 50;
+    public int currentHealth;
 
-    [HideInInspector]
     public EnemySpawnerScript spawner;
 
-    private void Awake()
+    public DamagePopup damagePopup;
+    public DamageDealtCounter damageCounter;
+
+    void Start()
     {
         currentHealth = maxHealth;
+
+        if (damageCounter == null)
+            damageCounter = FindObjectOfType<DamageDealtCounter>();
     }
 
-    // This is called by your Melee or Projectile scripts
-    public void Interact()
+    public void TakeDamage(int damage)
     {
-        TakeDamage(25);
-    }
+        currentHealth -= damage;
 
-    public void TakeDamage(int amount)
-    {
-        currentHealth -= amount;
-        if (currentHealth <= 0) Die();
-    }
+        if (damagePopup != null)
+            damagePopup.ShowDamage(damage);
 
-    private void Die()
-    {
-        // Hide the enemy (don't destroy it so it can respawn)
-        gameObject.SetActive(false);
+        if (damageCounter != null)
+            damageCounter.AddDamage(damage);
 
-        if (spawner != null)
+        if (currentHealth <= 0)
         {
-            spawner.RequestRespawn(this.gameObject);
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        // Drop loot
+        EnemyDrop drop = GetComponent<EnemyDrop>();
+
+        if (drop != null)
+        {
+            drop.DropLoot();
         }
 
-        // Reset for the next time it appears
-        currentHealth = maxHealth;
+        // Tell spawner to respawn enemy later
+        if (spawner != null)
+        {
+            spawner.RequestRespawn(gameObject);
+        }
+
+        // Disable enemy instead of destroying
+        gameObject.SetActive(false);
     }
 }
