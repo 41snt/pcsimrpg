@@ -6,16 +6,15 @@ public class EnemySpawnerScript : MonoBehaviour
     [Header("Continuous Spawning (New Enemies)")]
     public GameObject enemyPrefab;
     public Transform spawnPoint;
-    public float spawnInterval = 5.0f; // A new enemy every 5 seconds
+    public float spawnInterval = 5.0f;
 
     [Header("Respawn Settings (Dead Enemies)")]
-    public float respawnDelay = 10.0f; // Dead ones come back after 10 seconds
+    public float respawnDelay = 10.0f;
 
     private void Start()
     {
         if (enemyPrefab != null)
         {
-            // Start the infinite loop for BRAND NEW enemies
             StartCoroutine(ContinuousSpawnRoutine());
         }
         else
@@ -24,7 +23,6 @@ public class EnemySpawnerScript : MonoBehaviour
         }
     }
 
-    // This loop runs forever to keep the world full
     IEnumerator ContinuousSpawnRoutine()
     {
         while (true)
@@ -44,7 +42,6 @@ public class EnemySpawnerScript : MonoBehaviour
         }
     }
 
-    // This is called by an enemy when it "dies"
     public void RequestRespawn(GameObject enemyToRespawn)
     {
         StartCoroutine(RespawnTimer(enemyToRespawn));
@@ -57,7 +54,7 @@ public class EnemySpawnerScript : MonoBehaviour
         if (enemy != null && spawnPoint != null)
         {
             enemy.transform.position = spawnPoint.position;
-            enemy.SetActive(true); // Turn the dead one back on
+            enemy.SetActive(true);
         }
     }
 }

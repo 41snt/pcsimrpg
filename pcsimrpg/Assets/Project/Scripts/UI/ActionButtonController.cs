@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,28 +17,17 @@ public class ActionButtonController : MonoBehaviour
     private void Awake()
     {
         button = GetComponent<Button>();
-
-        if (attackLogo == null || interactLogo == null || playerInteraction == null)
-        {
-            Debug.LogError("ActionButtonController is missing references.");
-            enabled = false;
-            return;
-        }
-
         button.onClick.AddListener(OnActionPressed);
+
         SetAttackMode();
     }
 
     private void Update()
     {
         if (playerInteraction.Current != null)
-        {
             SetInteractMode();
-        }
         else
-        {
             SetAttackMode();
-        }
     }
 
     private void SetAttackMode()
@@ -60,10 +47,6 @@ public class ActionButtonController : MonoBehaviour
         if (playerInteraction.Current != null)
         {
             playerInteraction.Current.Interact();
-        }
-        else if (playerInteraction.CurrentEnemy != null)
-        {
-            playerAttack.Attack();
         }
         else
         {
