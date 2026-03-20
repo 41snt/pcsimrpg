@@ -37,8 +37,16 @@ public class EnemySpawnerScript : MonoBehaviour
         if (enemyPrefab != null && spawnPoint != null)
         {
             GameObject newEnemy = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
+
             EnemyHealth health = newEnemy.GetComponent<EnemyHealth>();
-            if (health != null) health.spawner = this;
+
+            if (health != null)
+            {
+                health.spawner = this;
+
+                // ✅ Force reset (extra safety)
+                health.currentHealth = health.maxHealth;
+            }
         }
     }
 
@@ -54,6 +62,14 @@ public class EnemySpawnerScript : MonoBehaviour
         if (enemy != null && spawnPoint != null)
         {
             enemy.transform.position = spawnPoint.position;
+
+            // ✅ Reset health before enabling
+            EnemyHealth health = enemy.GetComponent<EnemyHealth>();
+            if (health != null)
+            {
+                health.currentHealth = health.maxHealth;
+            }
+
             enemy.SetActive(true);
         }
     }

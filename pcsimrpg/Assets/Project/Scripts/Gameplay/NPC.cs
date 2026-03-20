@@ -5,22 +5,10 @@ using UnityEngine.UI;
 
 public class NPC : MonoBehaviour, IInteractable
 {
-
-
     public NPCDialogue dialogueData;
     public GameObject dialoguePanel;
     public TMP_Text dialogueText, nameText;
     public Image portraitImage;
-    public QuestManager questManager;
-
-    void Start()
-    {
-        if (questManager == null)
-        {
-            questManager = FindObjectOfType<QuestManager>();
-        }
-    }
-
 
     private int dialogueIndex;
     private bool isTyping, isDialogueActive;
@@ -30,7 +18,6 @@ public class NPC : MonoBehaviour, IInteractable
         return !isDialogueActive;
     }
 
-    // Detect mouse click
     void OnMouseDown()
     {
         Interact();
@@ -38,17 +25,12 @@ public class NPC : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        if (dialogueData == null)
-            return;
+        if (dialogueData == null) return;
 
         if (isDialogueActive)
-        {
             NextLine();
-        }
         else
-        {
             StartDialogue();
-        }
     }
 
     void StartDialogue()
@@ -60,7 +42,6 @@ public class NPC : MonoBehaviour, IInteractable
         portraitImage.sprite = dialogueData.npcPortrait;
 
         dialoguePanel.SetActive(true);
-
         StartCoroutine(TypeLine());
     }
 
@@ -94,13 +75,6 @@ public class NPC : MonoBehaviour, IInteractable
         }
 
         isTyping = false;
-
-        if (dialogueData.autoProgressLines.Length > dialogueIndex &&
-            dialogueData.autoProgressLines[dialogueIndex])
-        {
-            yield return new WaitForSeconds(dialogueData.autoProgressDelay);
-            NextLine();
-        }
     }
 
     public void EndDialogue()
@@ -110,15 +84,15 @@ public class NPC : MonoBehaviour, IInteractable
         dialogueText.SetText("");
         dialoguePanel.SetActive(false);
 
-        if (questManager != null)
+        if (QuestManager.Instance != null)
         {
-            questManager.StartAOEQuest();
+            QuestManager.Instance.StartAOEQuest();
         }
     }
 
-
-
-
-
+    public interface IInteractable
+    {
+        void Interact();
+    }
 
 }

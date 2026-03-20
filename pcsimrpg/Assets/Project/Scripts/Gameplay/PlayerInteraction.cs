@@ -1,26 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    public IInteractable Current { get; private set; }
+    [HideInInspector] public IInteractable Current;
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        var interactable = other.GetComponent<IInteractable>();
-        if (interactable != null)
+        if (collision.TryGetComponent<IInteractable>(out var interactable))
         {
-            Current = interactable;
+            Current = interactable; // player is near an NPC
         }
     }
 
-    private void OnTriggerExit2D(Collider2D other)
+    private void OnTriggerExit2D(Collider2D collision)
     {
-        var interactable = other.GetComponent<IInteractable>();
-        if (interactable != null && interactable == Current)
+        if (collision.TryGetComponent<IInteractable>(out var interactable))
         {
-            Current = null;
+            if (Current == interactable)
+                Current = null; // player left NPC
         }
     }
 }

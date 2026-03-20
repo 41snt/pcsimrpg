@@ -714,8 +714,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 2137381026}
   spawnPoint: {fileID: 1972479920}
-  spawnInterval: 1e+24
-  respawnDelay: 1e+25
+  spawnInterval: 1e+15
+  respawnDelay: 1e+16
 --- !u!4 &159777614
 Transform:
   m_ObjectHideFlags: 0
@@ -729,7 +729,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &159777615
 MonoBehaviour:
@@ -745,8 +745,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 615043656}
   spawnPoint: {fileID: 1972479920}
-  spawnInterval: 1e+22
-  respawnDelay: 1e+21
+  spawnInterval: 1e+15
+  respawnDelay: 1e+16
 --- !u!114 &159777616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -761,8 +761,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 1861748403}
   spawnPoint: {fileID: 1972479920}
-  spawnInterval: 1e+18
-  respawnDelay: 2
+  spawnInterval: 5
+  respawnDelay: 20
 --- !u!1 &205017146
 GameObject:
   m_ObjectHideFlags: 0
@@ -1382,7 +1382,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &541709448
 BoxCollider2D:
@@ -1638,7 +1638,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &615043663
 MonoBehaviour:
@@ -1670,8 +1670,6 @@ MonoBehaviour:
   currentHealth: 30
   isAOEEnemy: 0
   spawner: {fileID: 159777613}
-  damagePopup: {fileID: 0}
-  damageCounter: {fileID: 0}
 --- !u!95 &615043665
 Animator:
   serializedVersion: 5
@@ -2075,7 +2073,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &885367777
 GameObject:
@@ -2428,7 +2426,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2604,7 +2602,7 @@ Transform:
   - {fileID: 1154965133}
   - {fileID: 38401451}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!58 &1041076148
 CircleCollider2D:
@@ -3467,20 +3465,20 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1322986142}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.8733624, y: 0.8733624, z: 0.8733624}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 68588287}
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_Father: {fileID: 1611732272}
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 400.00003, y: 224.89084}
+  m_SizeDelta: {x: 916, y: 515}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1323021726
 GameObject:
   m_ObjectHideFlags: 0
@@ -3807,13 +3805,60 @@ RectTransform:
   m_Children:
   - {fileID: 1373386654}
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 282.57782, y: 80.27412}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1532331483
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1532331485}
+  - component: {fileID: 1532331484}
+  m_Layer: 0
+  m_Name: QuestManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1532331484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1532331483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebce4c00bfc11834bb76191944e62c9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  goalText: {fileID: 66758159}
+  enemiesRequired: 5
+  aoeSpawner: {fileID: 1946227364}
+--- !u!4 &1532331485
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1532331483}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.44698924, y: 0.16484901, z: -0.0041292924}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 14
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1581265204
 GameObject:
   m_ObjectHideFlags: 0
@@ -4083,8 +4128,9 @@ RectTransform:
   - {fileID: 4210669733548596528}
   - {fileID: 3564753290364538706}
   - {fileID: 1206797603}
+  - {fileID: 1322986146}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4287,7 +4333,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1640022757
 MonoBehaviour:
@@ -4306,7 +4352,6 @@ MonoBehaviour:
   dialogueText: {fileID: 1891742294}
   nameText: {fileID: 885367780}
   portraitImage: {fileID: 1006630902}
-  questManager: {fileID: 0}
 --- !u!61 &1640022758
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4481,7 +4526,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8d508f816e9df4f973f426d95b39dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 1041076147}
   speed: 2
   attackRange: 2
 --- !u!114 &1861748405
@@ -4501,7 +4546,7 @@ MonoBehaviour:
   maxRadius: 4
   expandSpeed: 7.5
   attackCooldown: 3
-  damage: 25
+  damage: 2
 --- !u!114 &1861748406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4516,10 +4561,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 20
   currentHealth: 20
-  isAOEEnemy: 0
+  isAOEEnemy: 1
   spawner: {fileID: 159777613}
-  damagePopup: {fileID: 0}
-  damageCounter: {fileID: 68588288}
 --- !u!58 &1861748407
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -4648,8 +4691,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1239696657}
+  - {fileID: 1946227365}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1891742291
 GameObject:
@@ -4786,6 +4830,54 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &1946227363
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1946227365}
+  - component: {fileID: 1946227364}
+  m_Layer: 0
+  m_Name: AOEQuestSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1946227364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946227363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 362272289ee10fc4e90cde880cf5dcf7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aoeEnemyPrefab: {fileID: 1861748403}
+  spawnCenter: {fileID: 1972479920}
+  spawnCount: 5
+  spawnRadius: 3
+--- !u!4 &1946227365
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946227363}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1861748411}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1951215090
 GameObject:
   m_ObjectHideFlags: 0
@@ -4972,7 +5064,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &1972479921
 BoxCollider2D:
@@ -5031,7 +5123,7 @@ Transform:
   m_Children:
   - {fileID: 1290074543}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2026804726
 MonoBehaviour:
@@ -5134,7 +5226,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &2137381029
 Rigidbody2D:
@@ -5232,8 +5324,6 @@ MonoBehaviour:
   currentHealth: 15
   isAOEEnemy: 0
   spawner: {fileID: 159777613}
-  damagePopup: {fileID: 0}
-  damageCounter: {fileID: 0}
 --- !u!95 &2137381035
 Animator:
   serializedVersion: 5
@@ -5807,7 +5897,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!222 &3564753290364538716
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7995,7 +8085,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.54740906}
+  m_AnchoredPosition: {x: 0, y: -0.5474243}
   m_SizeDelta: {x: -29.1987, y: -93.7695}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3564753291629345539
@@ -8019,7 +8109,7 @@ GameObject:
   - component: {fileID: 3564753291629345536}
   - component: {fileID: 3564753291629345543}
   m_Layer: 0
-  m_Name: QuestGoal
+  m_Name: GoalText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8039,6 +8129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goalText: {fileID: 66758159}
   enemiesRequired: 5
+  aoeSpawner: {fileID: 1946227364}
 --- !u!224 &3564753291680737692
 RectTransform:
   m_ObjectHideFlags: 0

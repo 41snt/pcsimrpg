@@ -19,10 +19,16 @@ public class ActionButtonController : MonoBehaviour
         button = GetComponent<Button>();
         button.onClick.AddListener(OnActionPressed);
 
-        SetAttackMode();
+        UpdateButtonMode();
     }
 
     private void Update()
+    {
+        // Check every frame if player is near an interactable object
+        UpdateButtonMode();
+    }
+
+    private void UpdateButtonMode()
     {
         if (playerInteraction.Current != null)
             SetInteractMode();
@@ -32,14 +38,18 @@ public class ActionButtonController : MonoBehaviour
 
     private void SetAttackMode()
     {
-        attackLogo.SetActive(true);
-        interactLogo.SetActive(false);
+        if (!attackLogo.activeSelf)
+            attackLogo.SetActive(true);
+        if (interactLogo.activeSelf)
+            interactLogo.SetActive(false);
     }
 
     private void SetInteractMode()
     {
-        attackLogo.SetActive(false);
-        interactLogo.SetActive(true);
+        if (attackLogo.activeSelf)
+            attackLogo.SetActive(false);
+        if (!interactLogo.activeSelf)
+            interactLogo.SetActive(true);
     }
 
     private void OnActionPressed()
