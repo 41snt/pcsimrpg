@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cda466a9d31e7a4dafc187ee4eab4aa, type: 3}
   m_Name: NewNPCDialogue
   m_EditorClassIdentifier: 
-  npcName: 'Cuervo '
-  npcPortrait: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  npcName: Boss Mikey
+  npcPortrait: {fileID: 21300000, guid: c184eb04964ddb247835dd4695ded80b, type: 3}
   dialogueLines:
-  - Yo whats g tropa may quest ako sayo.
-  - Talunin mo ung limang melee enemy dun sa kanto men.
-  autoProgressLines: 0001
-  autoProgressDelay: 1.5
-  typingSpeed: 0.05
-  voiceSound: {fileID: 0}
-  voicePitch: 1
+  - 'I have something for you
+
+'
+  - 'Defeat 5 of those PSU goons that surges energy
+
+'
+  typingSpeed: 0.1
