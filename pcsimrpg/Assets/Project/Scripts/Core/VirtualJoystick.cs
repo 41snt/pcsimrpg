@@ -24,11 +24,16 @@ public class VirtualJoystick : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
         Vector2 keyboardInput = new Vector2(horizontal, vertical).normalized;
 
-        // Only use keyboard if there's input
         if (keyboardInput.magnitude > 0)
         {
             inputVector = keyboardInput;
             joystickKnob.anchoredPosition = keyboardInput * maxDistance;
+        }
+        else
+        {
+            // ADD: Reset when keys are released
+            joystickKnob.anchoredPosition = Vector2.zero;
+            inputVector = Vector2.zero;
         }
     }
 
