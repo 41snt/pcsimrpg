@@ -20,11 +20,10 @@ public class QuestManager : MonoBehaviour
 
     void Awake()
     {
+        // Simple singleton WITHOUT DontDestroyOnLoad
         if (Instance == null)
         {
             Instance = this;
-            transform.parent = null;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {

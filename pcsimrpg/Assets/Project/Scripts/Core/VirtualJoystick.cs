@@ -16,6 +16,22 @@ public class VirtualJoystick : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         return inputVector;
     }
 
+    void Update()
+    {
+        // ADD: WASD / Arrow key input
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
+
+        Vector2 keyboardInput = new Vector2(horizontal, vertical).normalized;
+
+        // Only use keyboard if there's input
+        if (keyboardInput.magnitude > 0)
+        {
+            inputVector = keyboardInput;
+            joystickKnob.anchoredPosition = keyboardInput * maxDistance;
+        }
+    }
+
     public void OnPointerDown(PointerEventData eventData)
     {
         OnDrag(eventData);
