@@ -44,7 +44,6 @@ public class EnemySpawnerScript : MonoBehaviour
             {
                 health.spawner = this;
 
-                // ✅ Force reset (extra safety)
                 health.currentHealth = health.maxHealth;
             }
         }
@@ -63,7 +62,6 @@ public class EnemySpawnerScript : MonoBehaviour
         {
             enemy.transform.position = spawnPoint.position;
 
-            // ✅ Reset health before enabling
             EnemyHealth health = enemy.GetComponent<EnemyHealth>();
             if (health != null)
             {

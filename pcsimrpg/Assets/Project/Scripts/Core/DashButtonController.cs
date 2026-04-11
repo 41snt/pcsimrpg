@@ -11,7 +11,6 @@ public class DashButtonController : MonoBehaviour
     {
         button = GetComponent<Button>();
 
-        // Automatically find the player
         playerMovement = FindObjectOfType<PlayerMovement>();
 
         if (playerMovement == null)

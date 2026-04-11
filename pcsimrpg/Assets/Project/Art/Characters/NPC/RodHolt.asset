@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4cda466a9d31e7a4dafc187ee4eab4aa, type: 3}
-  m_Name: NewNPCDialogue
+  m_Name: RodHolt
   m_EditorClassIdentifier: 
   npcName: Rod Holt (Modern PSU Designer)
   npcPortrait: {fileID: 21300000, guid: c184eb04964ddb247835dd4695ded80b, type: 3}
   dialogueLines:
   - "I\u2019m Rod Holt. In \u201977, I built the first switched-mode power supply
-    to keep early PCs from melting. I was the king of efficiency\u2014until now!"
+    to keep early PCs from melting. I was the king of efficiency until now!"
   - "My latest prototypes have mutated into Voltage Goons! They\u2019re leaking raw
     DC and hunting for anything grounded to fry. "
   - "If we don\u2019t discharge their capacitors fast, this whole block is going

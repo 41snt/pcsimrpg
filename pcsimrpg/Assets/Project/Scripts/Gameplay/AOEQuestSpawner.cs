@@ -20,7 +20,6 @@ public class AOEQuestSpawner : MonoBehaviour
         {
             float angle = i * Mathf.PI * 2 / spawnCount;
 
-            // ✅ FIXED FOR 2D
             Vector3 offset = new Vector3(
                 Mathf.Cos(angle) * spawnRadius,
                 Mathf.Sin(angle) * spawnRadius,
@@ -31,7 +30,6 @@ public class AOEQuestSpawner : MonoBehaviour
 
             GameObject enemy = Instantiate(aoeEnemyPrefab, spawnPos, Quaternion.identity);
 
-            // 🔥 CRITICAL FIX: ensure active
             enemy.SetActive(true);
 
             EnemyHealth health = enemy.GetComponent<EnemyHealth>();

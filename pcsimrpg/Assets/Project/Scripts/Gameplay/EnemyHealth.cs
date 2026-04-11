@@ -47,6 +47,6 @@ public class EnemyHealth : MonoBehaviour
             spawner.RequestRespawn(gameObject);
         }
 
-        gameObject.SetActive(false); // ✅ correct behavior
+        gameObject.SetActive(false); 
     }
 }

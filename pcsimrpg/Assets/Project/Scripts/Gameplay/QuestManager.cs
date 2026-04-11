@@ -51,7 +51,7 @@ public class QuestManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("❌ AOE Spawner not assigned!");
+            Debug.LogError("AOE Spawner not assigned!");
         }
 
         UpdateUI();
@@ -67,7 +67,7 @@ public class QuestManager : MonoBehaviour
         {
             enemiesDefeated = enemiesRequired;
             questCompleted = true;
-            Debug.Log("🏆 QUEST COMPLETED!");
+            Debug.Log(" QUEST COMPLETED!");
         }
 
         UpdateUI();
