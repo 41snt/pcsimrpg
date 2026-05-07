@@ -8,17 +8,27 @@ public class AOEQuestSpawner : MonoBehaviour
     public int spawnCount = 5;
     public float spawnRadius = 3f;
 
+    private bool hasSpawned;
+
     public void SpawnAOEEnemies()
     {
-        if (aoeEnemyPrefab == null || spawnCenter == null)
+        if (hasSpawned)
         {
-            Debug.LogError("❌ Missing prefab or spawn center!");
+            Debug.Log("Spawn blocked (already spawned).");
             return;
         }
 
+        if (aoeEnemyPrefab == null || spawnCenter == null)
+        {
+            Debug.LogError("Missing prefab or spawn center!");
+            return;
+        }
+
+        hasSpawned = true;
+
         for (int i = 0; i < spawnCount; i++)
         {
-            float angle = i * Mathf.PI * 2 / spawnCount;
+            float angle = i * Mathf.PI * 2f / spawnCount;
 
             Vector3 offset = new Vector3(
                 Mathf.Cos(angle) * spawnRadius,
@@ -30,18 +40,19 @@ public class AOEQuestSpawner : MonoBehaviour
 
             GameObject enemy = Instantiate(aoeEnemyPrefab, spawnPos, Quaternion.identity);
 
-            enemy.SetActive(true);
-
-            EnemyHealth health = enemy.GetComponent<EnemyHealth>();
-            if (health != null)
+            EnemyHealth hp = enemy.GetComponent<EnemyHealth>();
+            if (hp != null)
             {
-                health.currentHealth = health.maxHealth;
-                health.isAOEEnemy = true;
+                hp.currentHealth = hp.maxHealth;
+                hp.isAOEEnemy = true;
             }
-
-            Debug.Log("Spawned AOE enemy: " + enemy.name + " Active: " + enemy.activeSelf);
         }
 
-        Debug.Log("🔥 Spawned AOE quest group: " + spawnCount);
+        Debug.Log("AOE enemies spawned: " + spawnCount);
+    }
+
+    public void ResetSpawner()
+    {
+        hasSpawned = false;
     }
 }

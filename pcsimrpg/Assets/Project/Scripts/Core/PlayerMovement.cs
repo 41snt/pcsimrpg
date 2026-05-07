@@ -27,18 +27,26 @@ public class PlayerMovement : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         playerMana = GetComponent<PlayerMana>();
+
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody2D>();
+        }
     }
 
     void Update()
     {
-        moveInput = joystick.GetInput();
-
-        HandleAnimation();
-
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (joystick != null)
         {
-            TryDash();
+            moveInput = joystick.GetInput();
         }
+        else
+        {
+            moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        }
+
+        moveInput = moveInput.normalized;
+        HandleAnimation();
     }
 
     void FixedUpdate()
@@ -63,37 +71,39 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (Mathf.Abs(moveInput.y) > 0.1f)
         {
-            // Moving up or down
-            if (lastDirection == 1)
-                PlayAnimation("RightRun");
-            else
-                PlayAnimation("LeftRun");
+            if (lastDirection == 1) PlayAnimation("RightRun");
+            else PlayAnimation("LeftRun");
         }
         else
         {
-            if (lastDirection == 1)
-                PlayAnimation("idleright");
-            else
-                PlayAnimation("idleleft");
+            if (lastDirection == 1) PlayAnimation("idleright");
+            else PlayAnimation("idleleft");
         }
     }
 
     void PlayAnimation(string anim)
     {
         if (currentAnimation == anim) return;
-
         animator.Play(anim);
         currentAnimation = anim;
     }
 
-    void TryDash()
+    public bool DashButton()
     {
-        if (isDashing) return;
+        return TryDash();
+    }
+
+    private bool TryDash()
+    {
+        if (isDashing) return false;
 
         if (playerMana != null && playerMana.UseMana(dashManaCost))
         {
             StartCoroutine(Dash());
+            return true;
         }
+
+        return false;
     }
 
     IEnumerator Dash()
@@ -105,45 +115,44 @@ public class PlayerMovement : MonoBehaviour
 
         Vector2 dashDirection = moveInput;
 
+        // If no input, dash based on last direction
         if (dashDirection == Vector2.zero)
         {
-            dashDirection = lastDirection == 1 ? Vector2.right : Vector2.left;
+            dashDirection = (lastDirection == 1) ? Vector2.right : Vector2.left;
         }
 
         float timer = 0f;
 
         while (timer < dashDuration)
         {
-            rb.velocity = dashDirection.normalized * dashForce;
+            rb.velocity = dashDirection * dashForce;
 
+            // Spawn afterimage
             SpawnAfterImage();
 
-            timer += 0.03f;
-            yield return new WaitForSeconds(0.03f);
+            timer += Time.deltaTime;
+            yield return null;
         }
+
+        isDashing = false;
 
         if (playerSprite != null)
             playerSprite.color = Color.white;
-
-        isDashing = false;
     }
 
     void SpawnAfterImage()
     {
         if (afterImagePrefab == null || playerSprite == null) return;
 
-        GameObject img = Instantiate(
-            afterImagePrefab,
-            playerSprite.transform.position,
-            Quaternion.identity
-        );
-
+        GameObject img = Instantiate(afterImagePrefab, transform.position, Quaternion.identity);
         SpriteRenderer sr = img.GetComponent<SpriteRenderer>();
-        sr.sprite = playerSprite.sprite;
-    }
 
-      public void DashButton()
-     {
-        TryDash();
-     }
+        if (sr != null)
+        {
+            sr.sprite = playerSprite.sprite;
+            sr.flipX = playerSprite.flipX;
+        }
+
+        Destroy(img, 0.3f); // auto destroy after short time
+    }
 }

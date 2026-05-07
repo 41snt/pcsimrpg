@@ -8,50 +8,50 @@ public class QuestManager : MonoBehaviour
     [Header("UI")]
     public TextMeshProUGUI goalText;
 
-    [Header("Quest Settings")]
+    [Header("Settings")]
     public int enemiesRequired = 5;
 
-    [Header("AOE Spawner")]
+    [Header("Spawner")]
     public AOEQuestSpawner aoeSpawner;
 
-    private int enemiesDefeated = 0;
-    private bool questStarted = false;
-    private bool questCompleted = false;
+    private int enemiesDefeated;
+    private bool questStarted;
+    private bool questCompleted;
 
     void Awake()
     {
-        // Simple singleton WITHOUT DontDestroyOnLoad
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
     void Start()
     {
-        FindGoalText();
         UpdateUI();
     }
 
-    public void StartAOEQuest()
+    // 🔥 ONLY ENTRY POINT
+    public void TryStartAOEQuest()
     {
-        Debug.Log("🎯 QUEST STARTED");
+        if (questStarted)
+        {
+            Debug.Log("Quest already started - blocked.");
+            return;
+        }
 
+        StartAOEQuest();
+    }
+
+    void StartAOEQuest()
+    {
         questStarted = true;
         questCompleted = false;
         enemiesDefeated = 0;
 
+        Debug.Log("QUEST STARTED");
+
         if (aoeSpawner != null)
         {
             aoeSpawner.SpawnAOEEnemies();
-        }
-        else
-        {
-            Debug.LogError("AOE Spawner not assigned!");
         }
 
         UpdateUI();
@@ -65,47 +65,40 @@ public class QuestManager : MonoBehaviour
 
         if (enemiesDefeated >= enemiesRequired)
         {
-            enemiesDefeated = enemiesRequired;
             questCompleted = true;
-            Debug.Log(" QUEST COMPLETED!");
+            Debug.Log("QUEST COMPLETED");
         }
 
         UpdateUI();
     }
 
-    void FindGoalText()
+    public void ResetQuest()
     {
-        if (goalText == null)
-        {
-            goalText = FindObjectOfType<TextMeshProUGUI>();
-        }
+        questStarted = false;
+        questCompleted = false;
+        enemiesDefeated = 0;
+
+        if (aoeSpawner != null)
+            aoeSpawner.ResetSpawner();
+
+        UpdateUI();
     }
 
     void UpdateUI()
     {
-        if (goalText == null)
-        {
-            FindGoalText();
-            if (goalText == null) return;
-        }
-
-        goalText.gameObject.SetActive(true);
+        if (goalText == null) return;
 
         if (!questStarted)
         {
             goalText.text = "No Active Quest";
-            return;
         }
-
-        if (questCompleted)
+        else if (questCompleted)
         {
-            goalText.text = "[COMPLETED]\n\nDefeat AOE Enemies: "
-                + enemiesRequired + " / " + enemiesRequired;
+            goalText.text = "[COMPLETED]";
         }
         else
         {
-            goalText.text = "GOAL\n\nDefeat AOE Enemies: "
-                + enemiesDefeated + " / " + enemiesRequired;
+            goalText.text = $"Defeat Enemies: {enemiesDefeated}/{enemiesRequired}";
         }
     }
 }
