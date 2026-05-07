@@ -3,7 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class NPC : MonoBehaviour
+public class NPC : MonoBehaviour, IInteractable
 {
     public NPCDialogue dialogueData;
     private DialogueController dialogueUI;
@@ -18,12 +18,13 @@ public class NPC : MonoBehaviour
         dialogueUI = DialogueController.Instance;
     }
 
-    void OnMouseDown()
-    {
-        Interact();
-    }
+    // REMOVE OnMouseDown if using interaction button system
+    // void OnMouseDown()
+    // {
+    //     Interact();
+    // }
 
-    void Interact()
+    public void Interact()
     {
         if (dialogueData == null)
             return;

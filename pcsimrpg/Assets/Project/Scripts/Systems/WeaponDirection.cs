@@ -42,10 +42,25 @@ public class WeaponDirection : MonoBehaviour
         float startAngle = -swingAngle;
         float endAngle = swingAngle;
 
+        // Swing forward
         while (timer < swingDuration)
         {
             float angle = Mathf.Lerp(startAngle, endAngle, timer / swingDuration);
             transform.localRotation = Quaternion.Euler(0, 0, angle);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // Reset timer
+        timer = 0f;
+
+        // Swing back smoothly
+        while (timer < swingDuration)
+        {
+            float angle = Mathf.Lerp(endAngle, 0f, timer / swingDuration);
+            transform.localRotation = Quaternion.Euler(0, 0, angle);
+
             timer += Time.deltaTime;
             yield return null;
         }

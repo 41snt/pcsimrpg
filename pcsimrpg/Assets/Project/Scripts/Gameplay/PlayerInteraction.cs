@@ -4,20 +4,45 @@ public class PlayerInteraction : MonoBehaviour
 {
     [HideInInspector] public IInteractable Current;
 
+    [Header("Fallback Attack")]
+    public PlayerMeleeAttack meleeAttack;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent<IInteractable>(out var interactable))
+        IInteractable interactable = collision.GetComponentInParent<IInteractable>();
+
+        if (interactable != null)
         {
-            Current = interactable; // player is near an NPC
+            Current = interactable;
+
+            Debug.Log("Entered Interactable: " + collision.name);
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.TryGetComponent<IInteractable>(out var interactable))
+        IInteractable interactable = collision.GetComponentInParent<IInteractable>();
+
+        if (interactable != null && Current == interactable)
         {
-            if (Current == interactable)
-                Current = null; // player left NPC
+            Current = null;
+
+            Debug.Log("Left Interactable: " + collision.name);
+        }
+    }
+
+    public void Interact()
+    {
+        if (Current != null)
+        {
+            Current.Interact();
+        }
+        else
+        {
+            if (meleeAttack != null)
+            {
+                meleeAttack.Attack();
+            }
         }
     }
 }
