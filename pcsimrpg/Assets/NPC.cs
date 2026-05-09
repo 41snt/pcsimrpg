@@ -6,6 +6,10 @@ using UnityEngine.UI;
 public class NPC : MonoBehaviour, IInteractable
 {
     public NPCDialogue dialogueData;
+
+    // Bigger interaction distance
+    public float interactionDistance = 5f;
+
     private DialogueController dialogueUI;
     private int dialogueIndex;
     private bool isTyping, isDialogueActive;
@@ -18,14 +22,19 @@ public class NPC : MonoBehaviour, IInteractable
         dialogueUI = DialogueController.Instance;
     }
 
-    // REMOVE OnMouseDown if using interaction button system
-    // void OnMouseDown()
-    // {
-    //     Interact();
-    // }
-
     public void Interact()
     {
+        // Check distance
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player != null)
+        {
+            float distance = Vector2.Distance(transform.position, player.transform.position);
+
+            if (distance > interactionDistance)
+                return;
+        }
+
         if (dialogueData == null)
             return;
 

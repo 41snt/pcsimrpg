@@ -45,6 +45,17 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, I
 
     public Vector2 GetInput()
     {
+        // Keyboard WASD input
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
+
+        Vector2 keyboardInput = new Vector2(horizontal, vertical).normalized;
+
+        // If keyboard is being used, return keyboard input
+        if (keyboardInput != Vector2.zero)
+            return keyboardInput;
+
+        // Otherwise return joystick input
         return inputVector;
     }
 }

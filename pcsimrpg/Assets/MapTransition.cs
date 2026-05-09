@@ -1,26 +1,25 @@
 using Cinemachine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class MapTransation : MonoBehaviour
+public class MapTransition : MonoBehaviour
 {
-    [SerializeField] PolygonCollider2D mapBoundry;
-    CinemachineConfiner2D confiner;
-    [SerializeField] Direction direction;
+    [SerializeField] private Collider2D mapBoundary;
+    [SerializeField] private Direction direction;
+
+    private CinemachineConfiner confiner;
 
     enum Direction { Up, Down, Left, Right }
 
     private void Awake()
     {
-        confiner = FindObjectOfType<CinemachineConfiner2D>();
+        confiner = FindObjectOfType<CinemachineConfiner>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.CompareTag("Player"))
         {
-            confiner.m_BoundingShape2D = mapBoundry;
+            confiner.m_BoundingShape2D = mapBoundary;
             UpdatePlayerPosition(collision.gameObject);
         }
     }
@@ -40,11 +39,11 @@ public class MapTransation : MonoBehaviour
                 break;
 
             case Direction.Left:
-                newPos.x += 2;
+                newPos.x -= 2;
                 break;
 
             case Direction.Right:
-                newPos.x -= 2;
+                newPos.x += 2;
                 break;
         }
 
