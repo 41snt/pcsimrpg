@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: -5032750463119997116}
   - component: {fileID: 8501609019291121546}
   - component: {fileID: -3152723641058535728}
+  - component: {fileID: 4698986704577078795}
   m_Layer: 5
   m_Name: Item
   m_TagString: Item
@@ -105,6 +106,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00e147d1679140043b238991bd95b9f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minDropDistance: 2
+  maxDropDistance: 3
 --- !u!114 &-5032750463119997116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,7 +120,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 715e06dcf95d9994396e94f92079b9f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 0
+  ID: 1
+  Name: The Binary Edge
 --- !u!212 &8501609019291121546
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -185,4 +189,19 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.8
+  m_Radius: 0.05
+--- !u!114 &4698986704577078795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3066313262566381090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b17cfa5d88b42b458e8d8c48271d3b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bounceHeight: 0.3
+  bounceDuration: 0.5
+  bounceCount: 3

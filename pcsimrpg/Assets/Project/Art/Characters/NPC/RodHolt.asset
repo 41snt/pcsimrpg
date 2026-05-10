@@ -19,14 +19,8 @@ MonoBehaviour:
   - Looking for someone?
   - Head North he should be there
   - Oh.... ok...
-  autoProgressLines: 010101
-  autoProgressDelay: 1.5
-  typingSpeed: 0.05
+  typingSpeed: 0.4
   voiceSound: {fileID: 8300000, guid: 70349c1fc33dca5479e311e15101098d, type: 3}
   voicePitch: 1
-  choices:
-  - dialogueIndex: 1
-    choices:
-    - The HDD monarch
-    - No
-    nextDialogueIndexes: 0200000003000000
+  autoProgressLines: "\x01\x01\x01\x01"
+  autoProgressDelay: 0

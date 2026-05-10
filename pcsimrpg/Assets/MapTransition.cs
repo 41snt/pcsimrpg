@@ -3,12 +3,25 @@ using UnityEngine;
 
 public class MapTransition : MonoBehaviour
 {
-    [SerializeField] private Collider2D mapBoundary;
-    [SerializeField] private Direction direction;
+    [Header("Map Boundary")]
+    public PolygonCollider2D mapBoundry;
+
+    [Header("Direction")]
+    public Direction direction;
+
+    [Header("Teleport Target")]
+    public Transform teleportTargetPosition;
 
     private CinemachineConfiner confiner;
 
-    enum Direction { Up, Down, Left, Right }
+    public enum Direction
+    {
+        Up,
+        Down,
+        Left,
+        Right,
+        Teleport
+    }
 
     private void Awake()
     {
@@ -17,36 +30,46 @@ public class MapTransition : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player"))
         {
-            confiner.m_BoundingShape2D = mapBoundary;
+            // Change camera boundary
+            confiner.m_BoundingShape2D = mapBoundry;
+
+            // Move player
             UpdatePlayerPosition(collision.gameObject);
         }
     }
 
-    private void UpdatePlayerPosition(GameObject player)
+    void UpdatePlayerPosition(GameObject player)
     {
-        Vector3 newPos = player.transform.position;
+        // Teleport mode
+        if (direction == Direction.Teleport)
+        {
+            player.transform.position = teleportTargetPosition.position;
+            return;
+        }
+
+        Vector3 additivePos = player.transform.position;
 
         switch (direction)
         {
             case Direction.Up:
-                newPos.y += 2;
+                additivePos.y += 2;
                 break;
 
             case Direction.Down:
-                newPos.y -= 2;
+                additivePos.y += -2;
                 break;
 
             case Direction.Left:
-                newPos.x -= 2;
+                additivePos.x += -2;
                 break;
 
             case Direction.Right:
-                newPos.x += 2;
+                additivePos.x += 2;
                 break;
         }
 
-        player.transform.position = newPos;
+        player.transform.position = additivePos;
     }
 }

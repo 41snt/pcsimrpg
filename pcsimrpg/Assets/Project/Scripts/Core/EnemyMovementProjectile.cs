@@ -2,10 +2,14 @@ using UnityEngine;
 
 public class EnemyMovementProjectile : MonoBehaviour
 {
+    [Header("Movement")]
     public float speed = 3f;
     public float stopDistance = 3f;
 
+    [Header("Shooting")]
     public GameObject bulletPrefab;
+    public Transform firePoint;
+    public float shootRange = 6f;
     public float shootCooldown = 2f;
     public float bulletSpeed = 6f;
 
@@ -22,7 +26,10 @@ public class EnemyMovementProjectile : MonoBehaviour
 
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+
+        if (playerObj != null)
+            player = playerObj.transform;
 
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
@@ -44,6 +51,7 @@ public class EnemyMovementProjectile : MonoBehaviour
 
         float distance = Vector2.Distance(transform.position, player.position);
 
+        // Move toward player
         if (distance > stopDistance)
         {
             moveDirection = (player.position - transform.position).normalized;
@@ -59,6 +67,8 @@ public class EnemyMovementProjectile : MonoBehaviour
 
     void Update()
     {
+        if (player == null) return;
+
         UpdateAnimation();
         ShootLogic();
     }
@@ -73,12 +83,18 @@ public class EnemyMovementProjectile : MonoBehaviour
 
     void ShootLogic()
     {
-        shootTimer += Time.deltaTime;
+        float distance = Vector2.Distance(transform.position, player.position);
 
-        if (shootTimer >= shootCooldown)
+        // Shoot only if player is inside range
+        if (distance <= shootRange)
         {
-            Shoot();
-            shootTimer = 0f;
+            shootTimer += Time.deltaTime;
+
+            if (shootTimer >= shootCooldown)
+            {
+                Shoot();
+                shootTimer = 0f;
+            }
         }
     }
 
@@ -88,12 +104,21 @@ public class EnemyMovementProjectile : MonoBehaviour
 
         Vector2 direction = (player.position - transform.position).normalized;
 
-        GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+        Vector3 spawnPosition;
+
+        if (firePoint != null)
+            spawnPosition = firePoint.position;
+        else
+            spawnPosition = transform.position;
+
+        GameObject bullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
 
         Rigidbody2D bulletRB = bullet.GetComponent<Rigidbody2D>();
 
         if (bulletRB != null)
+        {
             bulletRB.velocity = direction * bulletSpeed;
+        }
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -111,5 +136,15 @@ public class EnemyMovementProjectile : MonoBehaviour
         {
             touchingPlayer = false;
         }
+    }
+
+    // Draw ranges in Scene View
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, shootRange);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, stopDistance);
     }
 }

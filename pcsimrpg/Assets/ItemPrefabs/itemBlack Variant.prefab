@@ -11,6 +11,10 @@ PrefabInstance:
       propertyPath: ID
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5032750463119997116, guid: b52d1f009e19f024889310c329e8e9aa, type: 3}
+      propertyPath: Name
+      value: Black Edge
+      objectReference: {fileID: 0}
     - target: {fileID: 3066313262566381090, guid: b52d1f009e19f024889310c329e8e9aa, type: 3}
       propertyPath: m_Name
       value: itemBlack Variant

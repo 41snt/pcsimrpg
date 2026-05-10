@@ -36,6 +36,13 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // PAUSE SYSTEM
+        if (PauseController.IsGamePaused)
+        {
+            rb.velocity = Vector2.zero;
+            return;
+        }
+
         if (joystick != null)
         {
             moveInput = joystick.GetInput();
@@ -51,6 +58,13 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        // PAUSE SYSTEM
+        if (PauseController.IsGamePaused)
+        {
+            rb.velocity = Vector2.zero;
+            return;
+        }
+
         if (!isDashing)
         {
             rb.velocity = moveInput * moveSpeed;
@@ -90,6 +104,10 @@ public class PlayerMovement : MonoBehaviour
 
     public bool DashButton()
     {
+        // BLOCK DASH WHILE PAUSED
+        if (PauseController.IsGamePaused)
+            return false;
+
         return TryDash();
     }
 
@@ -125,9 +143,16 @@ public class PlayerMovement : MonoBehaviour
 
         while (timer < dashDuration)
         {
+            // STOP DASH WHEN PAUSED
+            if (PauseController.IsGamePaused)
+            {
+                rb.velocity = Vector2.zero;
+                yield return null;
+                continue;
+            }
+
             rb.velocity = dashDirection * dashForce;
 
-            // Spawn afterimage
             SpawnAfterImage();
 
             timer += Time.deltaTime;
@@ -153,6 +178,6 @@ public class PlayerMovement : MonoBehaviour
             sr.flipX = playerSprite.flipX;
         }
 
-        Destroy(img, 0.3f); // auto destroy after short time
+        Destroy(img, 0.3f);
     }
 }

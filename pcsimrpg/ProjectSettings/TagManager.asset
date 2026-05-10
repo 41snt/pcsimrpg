@@ -13,8 +13,8 @@ TagManager:
   - 1
   - Water
   - UI
-  - 
-  - 
+  - MENU UI
+  - PreviewOnly
   - 
   - 
   - 
@@ -42,4 +42,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: decor
+    uniqueID: 473153255
     locked: 0
