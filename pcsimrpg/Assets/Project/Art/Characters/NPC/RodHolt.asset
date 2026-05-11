@@ -9,18 +9,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17a0986f031b87845835175df37a50db, type: 3}
+  m_Script: {fileID: 11500000, guid: 0e1c5a9e387f12846a6554468c3ebdb3, type: 3}
   m_Name: RodHolt
   m_EditorClassIdentifier: 
-  npcName: Rod Holt
-  npcPortrait: {fileID: 21300000, guid: 549e50c24cb88bc49b00854e056f291f, type: 3}
+  npcName: Widow
+  npcPortrait: {fileID: 21300000, guid: b1bcde825e061454b8eb99bb70436968, type: 3}
   dialogueLines:
-  - Hello there traveler!
-  - Looking for someone?
-  - Head North he should be there
-  - Oh.... ok...
-  typingSpeed: 0.4
-  voiceSound: {fileID: 8300000, guid: 70349c1fc33dca5479e311e15101098d, type: 3}
-  voicePitch: 1
-  autoProgressLines: "\x01\x01\x01\x01"
+  - Hello!
+  - Are u looking for the head of this region?
+  - Head North.
+  - Ok then....
+  autoProgressLines: 01010000
+  endDialogueLines: 00000101
   autoProgressDelay: 0
+  typingSpeed: 0.03
+  choices:
+  - dialogueIndex: 1
+    choices:
+    - Yes
+    - No
+    nextDialogueIndexes: 0200000003000000
+    triggersCutscene: 0100

@@ -64,4 +64,16 @@ public class WaypointMover : MonoBehaviour
 
         isWaiting = false;
     }
+
+    // ✅ stop movement
+    public void StopMoving()
+    {
+        isStopped = true;
+    }
+
+    // ✅ resume movement
+    public void ResumeMoving()
+    {
+        isStopped = false;
+    }
 }

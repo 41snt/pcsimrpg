@@ -10,9 +10,13 @@ public class EnemyBullet : MonoBehaviour
         Destroy(gameObject, lifeTime);
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Hit player
+        // Ignore enemy collision
+        if (collision.CompareTag("Enemy"))
+            return;
+
+        // Damage player
         if (collision.CompareTag("Player"))
         {
             PlayerHealth playerHealth = collision.GetComponent<PlayerHealth>();
@@ -21,12 +25,10 @@ public class EnemyBullet : MonoBehaviour
             {
                 playerHealth.TakeDamage(damage);
             }
-
-            Destroy(gameObject);
         }
 
-        // Destroy on walls/objects
-        if (!collision.CompareTag("Enemy"))
+        // Destroy only on BoxCollider2D
+        if (collision.GetComponent<BoxCollider2D>() != null)
         {
             Destroy(gameObject);
         }
