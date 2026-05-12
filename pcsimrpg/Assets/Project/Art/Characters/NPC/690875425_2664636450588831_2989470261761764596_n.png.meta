@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1319cccae8a37ae45ab28af2986b46f4
+guid: 6f33f17b4fc26b247b745a34e901b3d8
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -42,13 +42,13 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 8
-  spritePivot: {x: 1, y: 0}
-  spritePixelsToUnits: 32
-  spriteBorder: {x: 114, y: 52, z: 353, w: 0}
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 428, y: 1203, z: 360, w: 27}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -91,49 +91,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites:
-    - serializedVersion: 2
-      name: PC Chest
-      rect:
-        serializedVersion: 2
-        x: 115
-        y: 53
-        width: 199
-        height: 195
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 68674bc5a1147c4429e2793f574dce44
-      internalID: 1820103467
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ChatGPT_Image_May_10__2026__04_28_59_AM-removebg-preview_1
-      rect:
-        serializedVersion: 2
-        x: 396
-        y: 49
-        width: 184
-        height: 270
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 19148be9b04752245919b0875b71eaed
-      internalID: 1674663674
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
+    sprites: []
     outline: []
     physicsShape: []
     bones: []
@@ -144,9 +102,7 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      ChatGPT_Image_May_10__2026__04_28_59_AM-removebg-preview_1: 1674663674
-      PC Chest: 1820103467
+    nameFileIdTable: {}
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

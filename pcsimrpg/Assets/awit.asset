@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d65ee17f280e53e4dbd0ace53d4514ad, type: 3}
   m_Name: awit
   m_EditorClassIdentifier: 
-  questID: GatherPcParts_cf930b37-2e6e-4da7-ad3b-9380e4f5e169
-  questName: Gather Pc Parts
+  questID: GatherPcPart_73a458db-5319-4e45-a923-8ffdadbe0887
+  questName: Gather Pc Part
   description: 
   objectives:
-  - objectiveID: 1
+  - objectiveID: 3
     description: Gather 5 Rams
     type: 0
-    requiredAmount: 3
+    requiredAmount: 5
     currentAmount: 0
