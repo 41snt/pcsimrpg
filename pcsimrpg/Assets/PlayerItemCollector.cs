@@ -6,29 +6,86 @@ public class PlayerItemCollector : MonoBehaviour
 {
     private InventoryController inventoryController;
 
-    // Start is called before the first frame update
     void Start()
     {
-        inventoryController = FindObjectOfType<InventoryController>();
+        inventoryController =
+            FindObjectOfType<InventoryController>();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(
+        Collider2D collision)
     {
-        if (collision.CompareTag("Item"))
+        if (!collision.CompareTag("Item"))
+            return;
+
+        Item item =
+            collision.GetComponent<Item>();
+
+        if (item == null)
+            return;
+
+        bool itemAdded =
+            inventoryController.AddItem(
+                collision.gameObject);
+
+        if (!itemAdded)
+            return;
+
+        // =========================
+        // UPDATE QUESTS
+        // =========================
+
+        if (QuestController.Instance != null)
         {
-            Item item = collision.GetComponent<Item>();
-            if (item != null)
+            foreach (QuestProgress quest
+                in QuestController.Instance
+                .activateQuests)
             {
-                //Add item inventory
-            }
+                if (quest == null)
+                    continue;
 
-            bool itemAdded = inventoryController.AddItem(collision.gameObject);
+                if (quest.objectives == null)
+                    continue;
 
-            if (itemAdded)
-            {
-                item.PickUp();
-                Destroy(collision.gameObject);
+                foreach (QuestObjective objective
+                    in quest.objectives)
+                {
+                    if (objective == null)
+                        continue;
+
+                    // MATCH ITEM NAME
+                    if (objective.objectiveID ==
+                        item.Name)
+                    {
+                        objective.currentAmount++;
+
+                        Debug.Log(
+                            "Quest Updated: "
+                            + objective.description
+                            + " "
+                            + objective.currentAmount
+                            + "/"
+                            + objective.requiredAmount);
+                    }
+                }
             }
         }
+
+        // PICKUP UI
+        if (ItemPickupUIController.Instance != null)
+        {
+            Sprite itemIcon =
+                item.GetComponent<UnityEngine.UI.Image>()
+                ?.sprite;
+
+            ItemPickupUIController.Instance
+                .ShowItemPickup(
+                    item.Name,
+                    itemIcon);
+        }
+
+        item.PickUp();
+
+        Destroy(collision.gameObject);
     }
 }

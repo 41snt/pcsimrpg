@@ -36,5 +36,5 @@ MonoBehaviour:
     cutsceneNames: []
   questInProgressIndex: 0
   questCompletedIndex: 0
-  quest: {fileID: 0}
+  quest: {fileID: 11400000, guid: 0babe0a04e8c3e445aac8c6679f0ea18, type: 2}
   rotateTriggers: []

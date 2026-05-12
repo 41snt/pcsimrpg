@@ -30,7 +30,8 @@ public class InventoryController : MonoBehaviour
 
     private void Awake()
     {
-        if (instance != null && instance != this)
+        if (instance != null &&
+            instance != this)
         {
             Destroy(gameObject);
             return;
@@ -47,7 +48,9 @@ public class InventoryController : MonoBehaviour
         // CREATE SLOTS
         if (inventoryPanel.transform.childCount == 0)
         {
-            for (int i = 0; i < slotCount; i++)
+            for (int i = 0;
+                i < slotCount;
+                i++)
             {
                 GameObject slot =
                     Instantiate(
@@ -56,6 +59,55 @@ public class InventoryController : MonoBehaviour
 
                 slot.transform.localScale =
                     Vector3.one;
+            }
+        }
+
+        ForceCleanInventory();
+
+        RebuildItemCounts();
+    }
+
+    // =========================
+    // CLEAN INVENTORY
+    // =========================
+
+    public void ForceCleanInventory()
+    {
+        foreach (Transform slotTransform
+            in inventoryPanel.transform)
+        {
+            Slot slot =
+                slotTransform.GetComponent<Slot>();
+
+            if (slot == null)
+                continue;
+
+            // REMOVE DESTROYED REFERENCES
+            if (slot.currentItem != null &&
+                !slot.currentItem)
+            {
+                slot.currentItem = null;
+            }
+
+            // REMOVE INVALID CHILDREN
+            for (int i =
+                slotTransform.childCount - 1;
+                i >= 0;
+                i--)
+            {
+                Transform child =
+                    slotTransform.GetChild(i);
+
+                if (child == null)
+                    continue;
+
+                Item item =
+                    child.GetComponent<Item>();
+
+                if (item == null)
+                {
+                    Destroy(child.gameObject);
+                }
             }
         }
 
@@ -70,7 +122,8 @@ public class InventoryController : MonoBehaviour
     {
         itemsCountCache.Clear();
 
-        foreach (Transform slotTransform in inventoryPanel.transform)
+        foreach (Transform slotTransform
+            in inventoryPanel.transform)
         {
             Slot slot =
                 slotTransform.GetComponent<Slot>();
@@ -78,21 +131,52 @@ public class InventoryController : MonoBehaviour
             if (slot == null)
                 continue;
 
+            // CLEAN DESTROYED REFERENCES
+            if (slot.currentItem != null &&
+                !slot.currentItem)
+            {
+                slot.currentItem = null;
+            }
+
+            // CLEAN INVALID CHILDREN
             if (slot.currentItem == null)
+            {
+                for (int i =
+                    slotTransform.childCount - 1;
+                    i >= 0;
+                    i--)
+                {
+                    Transform child =
+                        slotTransform.GetChild(i);
+
+                    if (child == null)
+                        continue;
+
+                    Destroy(child.gameObject);
+                }
+
                 continue;
+            }
 
             Item item =
                 slot.currentItem.GetComponent<Item>();
 
             if (item == null)
+            {
+                Destroy(slot.currentItem);
+
+                slot.currentItem = null;
+
                 continue;
+            }
 
             if (!itemsCountCache.ContainsKey(item.ID))
             {
                 itemsCountCache[item.ID] = 0;
             }
 
-            itemsCountCache[item.ID] += item.quantity;
+            itemsCountCache[item.ID] +=
+                item.quantity;
         }
 
         OnInventoryChanged?.Invoke();
@@ -118,8 +202,11 @@ public class InventoryController : MonoBehaviour
         if (itemToAdd == null)
             return false;
 
+        ForceCleanInventory();
+
         // STACK FIRST
-        foreach (Transform slotTransform in inventoryPanel.transform)
+        foreach (Transform slotTransform
+            in inventoryPanel.transform)
         {
             Slot slot =
                 slotTransform.GetComponent<Slot>();
@@ -133,8 +220,14 @@ public class InventoryController : MonoBehaviour
             Item slotItem =
                 slot.currentItem.GetComponent<Item>();
 
-            if (slotItem != null &&
-                slotItem.ID == itemToAdd.ID)
+            if (slotItem == null)
+            {
+                slot.currentItem = null;
+                continue;
+            }
+
+            if (slotItem.ID ==
+                itemToAdd.ID)
             {
                 slotItem.AddToStack();
 
@@ -145,7 +238,8 @@ public class InventoryController : MonoBehaviour
         }
 
         // EMPTY SLOT
-        foreach (Transform slotTransform in inventoryPanel.transform)
+        foreach (Transform slotTransform
+            in inventoryPanel.transform)
         {
             Slot slot =
                 slotTransform.GetComponent<Slot>();
@@ -194,7 +288,8 @@ public class InventoryController : MonoBehaviour
         int itemID,
         int amountToRemove)
     {
-        foreach (Transform slotTransform in inventoryPanel.transform)
+        foreach (Transform slotTransform
+            in inventoryPanel.transform)
         {
             if (amountToRemove <= 0)
                 break;
@@ -238,15 +333,60 @@ public class InventoryController : MonoBehaviour
     }
 
     // =========================
+    // SPLIT STACKS
+    // =========================
+
+    public void SplitAllStacks()
+    {
+        foreach (Transform slotTransform
+            in inventoryPanel.transform)
+        {
+            Slot slot =
+                slotTransform.GetComponent<Slot>();
+
+            if (slot == null)
+                continue;
+
+            if (slot.currentItem == null)
+                continue;
+
+            ItemDragHandler dragHandler =
+                slot.currentItem
+                .GetComponent<ItemDragHandler>();
+
+            if (dragHandler == null)
+                continue;
+
+            Item item =
+                slot.currentItem
+                .GetComponent<Item>();
+
+            if (item == null)
+                continue;
+
+            if (item.quantity <= 1)
+                continue;
+
+            dragHandler.SplitStack();
+        }
+
+        RebuildItemCounts();
+    }
+
+    // =========================
     // SAVE
     // =========================
 
-    public List<InventorySaveData> GetInventoryItems()
+    public List<InventorySaveData>
+        GetInventoryItems()
     {
+        ForceCleanInventory();
+
         List<InventorySaveData> invData =
             new List<InventorySaveData>();
 
-        foreach (Transform slotTransform in inventoryPanel.transform)
+        foreach (Transform slotTransform
+            in inventoryPanel.transform)
         {
             Slot slot =
                 slotTransform.GetComponent<Slot>();
@@ -258,7 +398,8 @@ public class InventoryController : MonoBehaviour
                 continue;
 
             Item item =
-                slot.currentItem.GetComponent<Item>();
+                slot.currentItem
+                .GetComponent<Item>();
 
             if (item == null)
                 continue;
@@ -267,9 +408,13 @@ public class InventoryController : MonoBehaviour
                 new InventorySaveData
                 {
                     itemID = item.ID,
+
                     slotIndex =
-                        slotTransform.GetSiblingIndex(),
-                    quantity = item.quantity
+                        slotTransform
+                        .GetSiblingIndex(),
+
+                    quantity =
+                        item.quantity
                 });
         }
 
@@ -281,30 +426,63 @@ public class InventoryController : MonoBehaviour
     // =========================
 
     public void SetInventoryItems(
-        List<InventorySaveData> inventorySaveData)
+        List<InventorySaveData>
+        inventorySaveData)
     {
-        if (inventorySaveData == null)
+        if (inventoryPanel == null)
             return;
 
-        // CLEAR
-        foreach (Transform slotTransform in inventoryPanel.transform)
+        // CREATE MISSING SLOTS
+        while (
+            inventoryPanel.transform.childCount
+            < slotCount)
+        {
+            GameObject slot =
+                Instantiate(
+                    slotPrefab,
+                    inventoryPanel.transform);
+
+            slot.transform.localScale =
+                Vector3.one;
+        }
+
+        // CLEAR OLD ITEMS
+        foreach (Transform slotTransform
+            in inventoryPanel.transform)
         {
             Slot slot =
                 slotTransform.GetComponent<Slot>();
 
-            if (slot != null &&
-                slot.currentItem != null)
-            {
-                Destroy(slot.currentItem);
+            if (slot == null)
+                continue;
 
-                slot.currentItem = null;
+            for (int i =
+                slotTransform.childCount - 1;
+                i >= 0;
+                i--)
+            {
+                Destroy(
+                    slotTransform
+                    .GetChild(i)
+                    .gameObject);
             }
+
+            slot.currentItem = null;
         }
 
-        // LOAD
-        foreach (InventorySaveData data in inventorySaveData)
+        if (inventorySaveData == null)
         {
-            if (data.slotIndex >= slotCount)
+            RebuildItemCounts();
+            return;
+        }
+
+        // LOAD ITEMS
+        foreach (
+            InventorySaveData data
+            in inventorySaveData)
+        {
+            if (data.slotIndex < 0 ||
+                data.slotIndex >= slotCount)
                 continue;
 
             Slot slot =
@@ -312,8 +490,12 @@ public class InventoryController : MonoBehaviour
                 .GetChild(data.slotIndex)
                 .GetComponent<Slot>();
 
+            if (slot == null)
+                continue;
+
             GameObject itemPrefab =
-                itemDictionary.GetItemPrefab(
+                itemDictionary
+                .GetItemPrefab(
                     data.itemID);
 
             if (itemPrefab == null)
@@ -344,7 +526,8 @@ public class InventoryController : MonoBehaviour
                 itemComponent.quantity =
                     data.quantity;
 
-                itemComponent.UpdateQuantityDisplay();
+                itemComponent
+                    .UpdateQuantityDisplay();
             }
 
             slot.currentItem = item;

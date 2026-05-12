@@ -6,6 +6,6 @@ using UnityEngine;
 public class InventorySaveData
 {
     public int itemID;
-    public int slotIndex; //The index of the slot where the item is placed
+    public int slotIndex;
     public int quantity = 1;
 }

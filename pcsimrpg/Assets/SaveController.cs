@@ -6,26 +6,43 @@ using UnityEngine;
 
 public class SaveController : MonoBehaviour
 {
-    private string saveLocation;
+    private string autoSaveLocation;
+    private string manualSaveLocation;
 
     private InventoryController inventoryController;
     private HotbarController hotbarController;
 
     private Chest[] chests;
 
+    // =========================
+    // START
+    // =========================
+
     private void Start()
     {
         InitializeComponents();
 
-        LoadGame();
+        // CREATE START SAVE
+        if (!File.Exists(autoSaveLocation))
+        {
+            CreateAutoSave();
+        }
+
+        // LOAD AUTO SAVE
+        LoadAutoSave();
     }
 
     private void InitializeComponents()
     {
-        saveLocation =
+        autoSaveLocation =
             Path.Combine(
                 Application.persistentDataPath,
-                "saveData.json");
+                "autoSave.json");
+
+        manualSaveLocation =
+            Path.Combine(
+                Application.persistentDataPath,
+                "manualSave.json");
 
         inventoryController =
             FindObjectOfType<InventoryController>();
@@ -41,16 +58,43 @@ public class SaveController : MonoBehaviour
     // AUTO SAVE
     // =========================
 
-    private void OnApplicationQuit()
+    public void CreateAutoSave()
     {
-        SaveGame();
+        SaveToFile(autoSaveLocation);
+
+        Debug.Log("Auto Save Created");
+    }
+
+    public void LoadAutoSave()
+    {
+        LoadFromFile(autoSaveLocation);
+
+        Debug.Log("Loaded Auto Save");
     }
 
     // =========================
-    // SAVE
+    // MANUAL SAVE
     // =========================
 
-    public void SaveGame()
+    public void ManualSave()
+    {
+        SaveToFile(manualSaveLocation);
+
+        Debug.Log("Manual Save Complete");
+    }
+
+    public void LoadManualSave()
+    {
+        LoadFromFile(manualSaveLocation);
+
+        Debug.Log("Manual Save Loaded");
+    }
+
+    // =========================
+    // SAVE CORE
+    // =========================
+
+    private void SaveToFile(string path)
     {
         if (inventoryController == null)
             return;
@@ -90,11 +134,11 @@ public class SaveController : MonoBehaviour
                 questProgressData =
                     QuestController.Instance != null
                     ? QuestController.Instance.activateQuests
-                    : new List<Quest.QuestProgress>(),
+                    : new List<QuestProgress>(),
 
                 handedInQuestIDs =
                     QuestController.Instance != null
-                    ? QuestController.Instance.handInQuestIDs
+                    ? QuestController.Instance.handedInQuestIDs
                     : new List<string>()
             };
 
@@ -104,59 +148,22 @@ public class SaveController : MonoBehaviour
                 true);
 
         File.WriteAllText(
-            saveLocation,
+            path,
             json);
-
-        Debug.Log("Game Saved");
     }
 
     // =========================
-    // CHESTS
+    // LOAD CORE
     // =========================
 
-    private List<ChestSaveData> GetChestState()
+    private void LoadFromFile(string path)
     {
-        List<ChestSaveData> chestStates =
-            new List<ChestSaveData>();
-
-        foreach (Chest chest in chests)
-        {
-            if (chest == null)
-                continue;
-
-            ChestSaveData chestSaveData =
-                new ChestSaveData
-                {
-                    chestID =
-                        chest.ChestID,
-
-                    isOpened =
-                        chest.IsOpened
-                };
-
-            chestStates.Add(
-                chestSaveData);
-        }
-
-        return chestStates;
-    }
-
-    // =========================
-    // LOAD
-    // =========================
-
-    public void LoadGame()
-    {
-        if (!File.Exists(saveLocation))
-        {
-            CreateNewSave();
-
+        if (!File.Exists(path))
             return;
-        }
 
         SaveData saveData =
             JsonUtility.FromJson<SaveData>(
-                File.ReadAllText(saveLocation));
+                File.ReadAllText(path));
 
         if (saveData == null)
             return;
@@ -175,7 +182,7 @@ public class SaveController : MonoBehaviour
         }
 
         // =========================
-        // MAP BOUNDARY
+        // MAP
         // =========================
 
         CinemachineConfiner confiner =
@@ -206,7 +213,7 @@ public class SaveController : MonoBehaviour
         // INVENTORY
         // =========================
 
-        if (saveData.inventorySaveData != null)
+        if (inventoryController != null)
         {
             inventoryController.SetInventoryItems(
                 saveData.inventorySaveData);
@@ -216,8 +223,7 @@ public class SaveController : MonoBehaviour
         // HOTBAR
         // =========================
 
-        if (hotbarController != null &&
-            saveData.hotbarSaveData != null)
+        if (hotbarController != null)
         {
             hotbarController.SetHotbarItems(
                 saveData.hotbarSaveData);
@@ -227,11 +233,8 @@ public class SaveController : MonoBehaviour
         // CHESTS
         // =========================
 
-        if (saveData.chestSaveData != null)
-        {
-            LoadChestStates(
-                saveData.chestSaveData);
-        }
+        LoadChestStates(
+            saveData.chestSaveData);
 
         // =========================
         // QUESTS
@@ -242,22 +245,48 @@ public class SaveController : MonoBehaviour
             QuestController.Instance.LoadQuestProgress(
                 saveData.questProgressData);
 
-            QuestController.Instance.handInQuestIDs =
-                saveData.handedInQuestIDs != null
-                ? saveData.handedInQuestIDs
-                : new List<string>();
+            QuestController.Instance.handedInQuestIDs =
+                saveData.handedInQuestIDs;
         }
-
-        Debug.Log("Game Loaded");
     }
 
     // =========================
-    // LOAD CHESTS
+    // CHESTS
     // =========================
+
+    private List<ChestSaveData> GetChestState()
+    {
+        List<ChestSaveData> chestStates =
+            new List<ChestSaveData>();
+
+        foreach (Chest chest in chests)
+        {
+            if (chest == null)
+                continue;
+
+            ChestSaveData chestSaveData =
+                new ChestSaveData
+                {
+                    chestID =
+                        chest.chestID,
+
+                    isOpened =
+                        chest.isOpened
+                };
+
+            chestStates.Add(
+                chestSaveData);
+        }
+
+        return chestStates;
+    }
 
     private void LoadChestStates(
         List<ChestSaveData> chestStates)
     {
+        if (chestStates == null)
+            return;
+
         foreach (Chest chest in chests)
         {
             if (chest == null)
@@ -265,7 +294,7 @@ public class SaveController : MonoBehaviour
 
             ChestSaveData chestSaveData =
                 chestStates.FirstOrDefault(
-                    c => c.chestID == chest.ChestID);
+                    c => c.chestID == chest.chestID);
 
             if (chestSaveData != null)
             {
@@ -276,20 +305,11 @@ public class SaveController : MonoBehaviour
     }
 
     // =========================
-    // CREATE SAVE
+    // PLAYER DEATH
     // =========================
 
-    private void CreateNewSave()
+    public void RespawnFromAutoSave()
     {
-        inventoryController.SetInventoryItems(
-            new List<InventorySaveData>());
-
-        if (hotbarController != null)
-        {
-            hotbarController.SetHotbarItems(
-                new List<InventorySaveData>());
-        }
-
-        SaveGame();
+        LoadAutoSave();
     }
 }

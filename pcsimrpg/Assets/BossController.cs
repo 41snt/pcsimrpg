@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class BossController : MonoBehaviour
@@ -16,6 +17,12 @@ public class BossController : MonoBehaviour
     public float bulletSpeed = 7f;
     public float shootCooldown = 2f;
     public int bulletCount = 16;
+
+    // WARNING
+    public GameObject warningPrefab;
+    public float warningDuration = 2f;
+
+    private bool preparingShot = false;
 
     [Header("AOE Attack")]
     public CircleCollider2D aoeCollider;
@@ -92,7 +99,9 @@ public class BossController : MonoBehaviour
         if (player == null) return;
 
         float distanceToPlayer =
-            Vector2.Distance(transform.position, player.position);
+            Vector2.Distance(
+                transform.position,
+                player.position);
 
         // DETECT PLAYER
         if (distanceToPlayer <= detectionRadius)
@@ -129,17 +138,22 @@ public class BossController : MonoBehaviour
         }
 
         moveDirection =
-            (player.position - transform.position).normalized;
+            (player.position - transform.position)
+            .normalized;
 
         rb.MovePosition(
             rb.position +
-            moveDirection * moveSpeed * Time.fixedDeltaTime);
+            moveDirection *
+            moveSpeed *
+            Time.fixedDeltaTime);
     }
 
     void ReturnToStart()
     {
         float distanceToStart =
-            Vector2.Distance(transform.position, startPosition);
+            Vector2.Distance(
+                transform.position,
+                startPosition);
 
         if (distanceToStart <= 0.1f)
         {
@@ -149,11 +163,14 @@ public class BossController : MonoBehaviour
         }
 
         moveDirection =
-            (startPosition - transform.position).normalized;
+            (startPosition - transform.position)
+            .normalized;
 
         rb.MovePosition(
             rb.position +
-            moveDirection * returnSpeed * Time.fixedDeltaTime);
+            moveDirection *
+            returnSpeed *
+            Time.fixedDeltaTime);
     }
 
     // =========================
@@ -164,26 +181,73 @@ public class BossController : MonoBehaviour
     {
         if (!chasingPlayer) return;
 
+        if (preparingShot) return;
+
         shootTimer += Time.deltaTime;
 
         if (shootTimer >= shootCooldown)
         {
-            Shoot();
-            shootTimer = 0f;
+            StartCoroutine(
+                PrepareShoot());
         }
+    }
+
+    IEnumerator PrepareShoot()
+    {
+        preparingShot = true;
+
+        shootTimer = 0f;
+
+        GameObject warningObject = null;
+
+        // SPAWN WARNING ON PLAYER
+        if (warningPrefab != null &&
+            player != null)
+        {
+            warningObject =
+                Instantiate(
+                    warningPrefab,
+                    player.position,
+                    Quaternion.identity);
+
+            // FOLLOW PLAYER
+            warningObject.transform.SetParent(
+                player);
+        }
+
+        // WAIT BEFORE SHOOTING
+        yield return new WaitForSeconds(
+            warningDuration);
+
+        // FIRE BULLETS
+        Shoot();
+
+        // KEEP WARNING ACTIVE
+        yield return new WaitForSeconds(1f);
+
+        // REMOVE WARNING
+        if (warningObject != null)
+        {
+            Destroy(warningObject);
+        }
+
+        preparingShot = false;
     }
 
     void Shoot()
     {
         if (bulletPrefab == null) return;
 
-        float angleStep = 360f / bulletCount;
+        float angleStep =
+            360f / bulletCount;
 
         for (int i = 0; i < bulletCount; i++)
         {
-            float angle = i * angleStep;
+            float angle =
+                i * angleStep;
 
-            float rad = angle * Mathf.Deg2Rad;
+            float rad =
+                angle * Mathf.Deg2Rad;
 
             Vector2 direction =
                 new Vector2(
@@ -192,11 +256,16 @@ public class BossController : MonoBehaviour
                 .normalized;
 
             float bulletAngle =
-                Mathf.Atan2(direction.y, direction.x)
+                Mathf.Atan2(
+                    direction.y,
+                    direction.x)
                 * Mathf.Rad2Deg;
 
             Quaternion rotation =
-                Quaternion.Euler(0, 0, bulletAngle + 90f);
+                Quaternion.Euler(
+                    0,
+                    0,
+                    bulletAngle + 90f);
 
             GameObject bullet =
                 Instantiate(
@@ -210,7 +279,8 @@ public class BossController : MonoBehaviour
             if (bulletRB != null)
             {
                 bulletRB.velocity =
-                    direction * bulletSpeed;
+                    direction *
+                    bulletSpeed;
             }
         }
     }
@@ -243,18 +313,24 @@ public class BossController : MonoBehaviour
     void ExpandAOE()
     {
         currentAOERadius +=
-            aoeExpandSpeed * Time.deltaTime;
+            aoeExpandSpeed *
+            Time.deltaTime;
 
         if (aoeCollider != null)
-            aoeCollider.radius = currentAOERadius;
+            aoeCollider.radius =
+                currentAOERadius;
 
         // SCALE VISUAL
         if (aoeVisual != null)
         {
-            float size = currentAOERadius * 2f;
+            float size =
+                currentAOERadius * 2f;
 
             aoeVisual.localScale =
-                new Vector3(size, size, 1f);
+                new Vector3(
+                    size,
+                    size,
+                    1f);
         }
 
         if (currentAOERadius >= aoeMaxRadius)
@@ -277,7 +353,9 @@ public class BossController : MonoBehaviour
 
         if (aoeVisual != null)
         {
-            aoeVisual.localScale = Vector3.zero;
+            aoeVisual.localScale =
+                Vector3.zero;
+
             aoeVisual.gameObject.SetActive(false);
         }
     }
@@ -298,7 +376,8 @@ public class BossController : MonoBehaviour
 
                 if (playerHealth != null)
                 {
-                    playerHealth.TakeDamage(aoeDamage);
+                    playerHealth.TakeDamage(
+                        aoeDamage);
                 }
             }
         }

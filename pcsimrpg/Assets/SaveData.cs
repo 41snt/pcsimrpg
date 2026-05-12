@@ -17,10 +17,9 @@ public class SaveData
     public List<ChestSaveData> chestSaveData =
         new List<ChestSaveData>();
 
-    public List<Quest.QuestProgress> questProgressData =
-        new List<Quest.QuestProgress>();
+    public List<QuestProgress> questProgressData =
+        new List<QuestProgress>();
 
-    // ADD THIS
     public List<string> handedInQuestIDs =
         new List<string>();
 }

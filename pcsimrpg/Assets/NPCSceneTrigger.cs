@@ -42,7 +42,7 @@ public class NPCSceneTrigger : MonoBehaviour
 
         if (saveController != null)
         {
-            saveController.SaveGame();
+            saveController.ManualSave();
         }
 
         Debug.Log(

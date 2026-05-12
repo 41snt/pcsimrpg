@@ -242,8 +242,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00e147d1679140043b238991bd95b9f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minDropDistance: 2
-  maxDropDistance: 3
+  minDropDistance: 1
+  maxDropDistance: 1
 --- !u!114 &-5032750463119997116
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -3,103 +3,106 @@ using UnityEngine;
 
 public class QuestController : MonoBehaviour
 {
-    public static QuestController Instance { get; private set; }
+    public static QuestController Instance;
 
-    public List<Quest.QuestProgress> activateQuests =
-        new List<Quest.QuestProgress>();
+    // =========================
+    // ACTIVE QUESTS
+    // =========================
 
-    public List<string> handInQuestIDs =
+    public List<QuestProgress> activateQuests =
+        new List<QuestProgress>();
+
+    // =========================
+    // HANDED IN QUESTS
+    // =========================
+
+    public List<string> handedInQuestIDs =
         new List<string>();
-
-    private QuestUI questUI;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
-            return;
         }
-
-        questUI =
-            FindObjectOfType<QuestUI>();
-    }
-
-    private void Start()
-    {
-        if (InventoryController.Instance != null)
-        {
-            InventoryController.Instance.OnInventoryChanged +=
-                CheckInventoryForQuests;
-        }
-
-        RefreshQuestUI();
     }
 
     // =========================
-    // ACCEPT QUEST
+    // ADD QUEST
     // =========================
 
-    public void AcceptQuest(Quest quest)
+    public void AddQuest(Quest quest)
     {
         if (quest == null)
             return;
 
-        if (IsQuestActive(quest.questID))
-            return;
+        foreach (QuestProgress progress
+            in activateQuests)
+        {
+            if (progress.QuestID == quest.questID)
+            {
+                return;
+            }
+        }
 
-        if (IsQuestHandedIn(quest.questID))
-            return;
+        QuestProgress newQuest =
+            new QuestProgress(quest);
 
-        activateQuests.Add(
-            new Quest.QuestProgress(quest));
-
-        CheckInventoryForQuests();
-
-        RefreshQuestUI();
+        activateQuests.Add(newQuest);
     }
 
     // =========================
-    // ACTIVE CHECK
+    // COMPLETE QUEST
     // =========================
 
-    public bool IsQuestActive(string questID)
+    public void CompleteQuest(string questID)
     {
-        return activateQuests.Exists(
-            q => q.QuestID == questID);
+        foreach (QuestProgress progress
+            in activateQuests)
+        {
+            if (progress.QuestID == questID)
+            {
+                foreach (QuestObjective objective
+                    in progress.objectives)
+                {
+                    objective.currentAmount =
+                        objective.requiredAmount;
+                }
+
+                return;
+            }
+        }
     }
 
     // =========================
-    // COMPLETED CHECK
+    // IS QUEST COMPLETED
     // =========================
 
     public bool IsQuestCompleted(string questID)
     {
-        Quest.QuestProgress quest =
-            activateQuests.Find(
-                q => q.QuestID == questID);
+        foreach (QuestProgress progress
+            in activateQuests)
+        {
+            if (progress.QuestID == questID)
+            {
+                return progress.IsCompleted;
+            }
+        }
 
-        if (quest == null)
-            return false;
-
-        return quest.objectives.TrueForAll(
-            o => o.IsCompleted);
+        return false;
     }
 
     // =========================
-    // HANDED IN CHECK
+    // IS QUEST HANDED IN
     // =========================
 
     public bool IsQuestHandedIn(string questID)
     {
-        return handInQuestIDs.Contains(
-            questID);
+        return handedInQuestIDs.Contains(questID);
     }
 
     // =========================
@@ -108,37 +111,10 @@ public class QuestController : MonoBehaviour
 
     public void HandInQuest(string questID)
     {
-        Quest.QuestProgress quest =
-            activateQuests.Find(
-                q => q.QuestID == questID);
-
-        if (quest == null)
-            return;
-
-        // REMOVE REQUIRED ITEMS
-        foreach (var objective in quest.objectives)
+        if (!handedInQuestIDs.Contains(questID))
         {
-            int itemID;
-
-            if (int.TryParse(
-                objective.objectiveID,
-                out itemID))
-            {
-                InventoryController.Instance
-                    .RemoveItemsFromInventory(
-                        itemID,
-                        objective.requiredAmount);
-            }
+            handedInQuestIDs.Add(questID);
         }
-
-        if (!handInQuestIDs.Contains(questID))
-        {
-            handInQuestIDs.Add(questID);
-        }
-
-        activateQuests.Remove(quest);
-
-        RefreshQuestUI();
     }
 
     // =========================
@@ -146,85 +122,42 @@ public class QuestController : MonoBehaviour
     // =========================
 
     public void LoadQuestProgress(
-        List<Quest.QuestProgress> loadedQuests)
+        List<QuestProgress> loadedQuests)
     {
-        activateQuests.Clear();
+        activateQuests =
+            loadedQuests;
 
-        if (loadedQuests != null)
+        if (activateQuests == null)
         {
-            activateQuests.AddRange(
-                loadedQuests);
+            activateQuests =
+                new List<QuestProgress>();
         }
-
-        CheckInventoryForQuests();
-
-        RefreshQuestUI();
     }
 
     // =========================
-    // INVENTORY CHECK
+    // IS QUEST ACTIVE
     // =========================
 
-    public void CheckInventoryForQuests()
+    public bool IsQuestActive(string questID)
     {
-        if (InventoryController.Instance == null)
-            return;
-
-        Dictionary<int, int> itemCounts =
-            InventoryController.Instance.GetItemCounts();
-
-        foreach (Quest.QuestProgress quest in activateQuests)
+        foreach (QuestProgress progress
+            in activateQuests)
         {
-            if (quest == null)
-                continue;
-
-            if (quest.objectives == null)
-                continue;
-
-            foreach (var objective in quest.objectives)
+            if (progress.QuestID == questID)
             {
-                if (objective == null)
-                    continue;
-
-                int itemID;
-
-                if (!int.TryParse(
-                    objective.objectiveID,
-                    out itemID))
-                    continue;
-
-                int count =
-                    itemCounts.TryGetValue(
-                        itemID,
-                        out int value)
-                    ? value
-                    : 0;
-
-                objective.currentAmount =
-                    Mathf.Min(
-                        count,
-                        objective.requiredAmount);
+                return true;
             }
         }
 
-        RefreshQuestUI();
+        return false;
     }
 
     // =========================
-    // UI
+    // ACCEPT QUEST
     // =========================
 
-    public void RefreshQuestUI()
+    public void AcceptQuest(Quest quest)
     {
-        if (questUI == null)
-        {
-            questUI =
-                FindObjectOfType<QuestUI>();
-        }
-
-        if (questUI != null)
-        {
-            questUI.UpdateQuestUI();
-        }
+        AddQuest(quest);
     }
 }
