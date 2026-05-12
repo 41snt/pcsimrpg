@@ -114,6 +114,8 @@ public class ItemDragHandler : MonoBehaviour,
 
                     Destroy(gameObject);
 
+                    inventoryController.RebuildItemCounts();
+
                     return;
                 }
                 else
@@ -149,6 +151,8 @@ public class ItemDragHandler : MonoBehaviour,
             transform.localScale = Vector3.one;
 
             dropSlot.currentItem = gameObject;
+
+            inventoryController.RebuildItemCounts();
 
             return;
         }
@@ -243,6 +247,8 @@ public class ItemDragHandler : MonoBehaviour,
                 bounce.StartBounce();
             }
 
+            inventoryController.RebuildItemCounts();
+
             ReturnToOriginalSlot();
 
             return;
@@ -265,6 +271,8 @@ public class ItemDragHandler : MonoBehaviour,
         {
             itemBounce.StartBounce();
         }
+
+        inventoryController.RebuildItemCounts();
     }
 
     // =========================
@@ -318,6 +326,8 @@ public class ItemDragHandler : MonoBehaviour,
                     Vector3.one;
 
                 slot.currentItem = newItem;
+
+                inventoryController.RebuildItemCounts();
 
                 return;
             }

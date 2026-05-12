@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,17 +5,30 @@ using UnityEngine;
 public class SaveData
 {
     public Vector3 playerPosition;
-    public string mapBoundary; // The boundary name for the map
 
-    public List<InventorySaveData> inventorySaveData;
-    public List<InventorySaveData> hotbarSaveData;
+    public string mapBoundary;
 
-    public List<ChestSaveData> chestSaveData;
+    public List<InventorySaveData> inventorySaveData =
+        new List<InventorySaveData>();
+
+    public List<InventorySaveData> hotbarSaveData =
+        new List<InventorySaveData>();
+
+    public List<ChestSaveData> chestSaveData =
+        new List<ChestSaveData>();
+
+    public List<Quest.QuestProgress> questProgressData =
+        new List<Quest.QuestProgress>();
+
+    // ADD THIS
+    public List<string> handedInQuestIDs =
+        new List<string>();
 }
 
 [System.Serializable]
 public class ChestSaveData
 {
     public string chestID;
+
     public bool isOpened;
 }

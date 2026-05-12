@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,11 +11,22 @@ public class InventoryController : MonoBehaviour
     public int slotCount;
     public GameObject[] itemPrefabs;
 
+    // =========================
+    // SINGLETON
+    // =========================
+
     public static InventoryController instance
     {
         get;
         private set;
     }
+
+    public static InventoryController Instance => instance;
+
+    private Dictionary<int, int> itemsCountCache =
+        new Dictionary<int, int>();
+
+    public event Action OnInventoryChanged;
 
     private void Awake()
     {
@@ -28,91 +39,46 @@ public class InventoryController : MonoBehaviour
         instance = this;
     }
 
-    void Start()
+    private void Start()
     {
-        itemDictionary = FindObjectOfType<ItemDictionary>();
-    }
+        itemDictionary =
+            FindObjectOfType<ItemDictionary>();
 
-    // =========================
-    // ADD ITEM
-    // =========================
-
-    public bool AddItem(GameObject itemPrefab)
-    {
-        Item itemToAdd =
-            itemPrefab.GetComponent<Item>();
-
-        if (itemToAdd == null)
-            return false;
-
-        // STACK ITEMS
-        foreach (Transform slotTransform
-            in inventoryPanel.transform)
+        // CREATE SLOTS
+        if (inventoryPanel.transform.childCount == 0)
         {
-            Slot slot =
-                slotTransform.GetComponent<Slot>();
-
-            if (slot != null &&
-                slot.currentItem != null)
+            for (int i = 0; i < slotCount; i++)
             {
-                Item slotItem =
-                    slot.currentItem.GetComponent<Item>();
-
-                if (slotItem != null &&
-                    slotItem.ID == itemToAdd.ID)
-                {
-                    slotItem.AddToStack();
-
-                    return true;
-                }
-            }
-        }
-
-        // FIND EMPTY SLOT
-        foreach (Transform slotTransform
-            in inventoryPanel.transform)
-        {
-            Slot slot =
-                slotTransform.GetComponent<Slot>();
-
-            if (slot != null &&
-                slot.currentItem == null)
-            {
-                GameObject newItem =
+                GameObject slot =
                     Instantiate(
-                        itemPrefab,
-                        slotTransform);
+                        slotPrefab,
+                        inventoryPanel.transform);
 
-                newItem.GetComponent<RectTransform>()
-                    .anchoredPosition =
-                    Vector2.zero;
-
-                newItem.transform.localScale =
+                slot.transform.localScale =
                     Vector3.one;
-
-                slot.currentItem = newItem;
-
-                return true;
             }
         }
 
-        return false;
+        RebuildItemCounts();
     }
 
     // =========================
-    // SPLIT ALL STACKS
+    // ITEM COUNTS
     // =========================
 
-    public void SplitAllStacks()
+    public void RebuildItemCounts()
     {
-        foreach (Transform slotTransform
-            in inventoryPanel.transform)
+        itemsCountCache.Clear();
+
+        foreach (Transform slotTransform in inventoryPanel.transform)
         {
             Slot slot =
                 slotTransform.GetComponent<Slot>();
 
-            if (slot == null ||
-                slot.currentItem == null)
+            if (slot == null)
+                continue;
+
+            if (slot.currentItem == null)
                 continue;
 
             Item item =
@@ -121,155 +87,269 @@ public class InventoryController : MonoBehaviour
             if (item == null)
                 continue;
 
-            // ONLY SPLIT STACKS > 1
-            if (item.quantity <= 1)
-                continue;
-
-            int splitAmount =
-                item.quantity / 2;
-
-            if (splitAmount <= 0)
-                continue;
-
-            // FIND EMPTY SLOT
-            foreach (Transform emptySlotTransform
-                in inventoryPanel.transform)
+            if (!itemsCountCache.ContainsKey(item.ID))
             {
-                Slot emptySlot =
-                    emptySlotTransform
-                    .GetComponent<Slot>();
-
-                if (emptySlot != null &&
-                    emptySlot.currentItem == null)
-                {
-                    // REMOVE HALF
-                    item.RemoveFromStack(
-                        splitAmount);
-
-                    // CREATE NEW STACK
-                    GameObject newItem =
-                        item.CloneItem(splitAmount);
-
-                    newItem.transform.SetParent(
-                        emptySlotTransform);
-
-                    newItem.GetComponent<RectTransform>()
-                        .anchoredPosition =
-                        Vector2.zero;
-
-                    newItem.transform.localScale =
-                        Vector3.one;
-
-                    emptySlot.currentItem =
-                        newItem;
-
-                    break;
-                }
+                itemsCountCache[item.ID] = 0;
             }
+
+            itemsCountCache[item.ID] += item.quantity;
         }
+
+        OnInventoryChanged?.Invoke();
+    }
+
+    public Dictionary<int, int> GetItemCounts()
+    {
+        return itemsCountCache;
     }
 
     // =========================
-    // SAVE INVENTORY
+    // ADD ITEM
     // =========================
 
-    public List<InventorySaveData>
-        GetInventoryItems()
+    public bool AddItem(GameObject itemPrefab)
     {
-        List<InventorySaveData> invData =
-            new List<InventorySaveData>();
+        if (itemPrefab == null)
+            return false;
 
-        foreach (Transform slotTransform
-            in inventoryPanel.transform)
+        Item itemToAdd =
+            itemPrefab.GetComponent<Item>();
+
+        if (itemToAdd == null)
+            return false;
+
+        // STACK FIRST
+        foreach (Transform slotTransform in inventoryPanel.transform)
         {
             Slot slot =
                 slotTransform.GetComponent<Slot>();
 
-            if (slot.currentItem != null)
-            {
-                Item item =
-                    slot.currentItem.GetComponent<Item>();
+            if (slot == null)
+                continue;
 
-                invData.Add(
-                    new InventorySaveData
-                    {
-                        itemID = item.ID,
-                        slotIndex =
-                            slotTransform.GetSiblingIndex(),
-                        quantity = item.quantity
-                    });
+            if (slot.currentItem == null)
+                continue;
+
+            Item slotItem =
+                slot.currentItem.GetComponent<Item>();
+
+            if (slotItem != null &&
+                slotItem.ID == itemToAdd.ID)
+            {
+                slotItem.AddToStack();
+
+                RebuildItemCounts();
+
+                return true;
             }
+        }
+
+        // EMPTY SLOT
+        foreach (Transform slotTransform in inventoryPanel.transform)
+        {
+            Slot slot =
+                slotTransform.GetComponent<Slot>();
+
+            if (slot == null)
+                continue;
+
+            if (slot.currentItem == null)
+            {
+                GameObject newItem =
+                    Instantiate(
+                        itemPrefab,
+                        slotTransform);
+
+                RectTransform rect =
+                    newItem.GetComponent<RectTransform>();
+
+                if (rect != null)
+                {
+                    rect.anchoredPosition =
+                        Vector2.zero;
+                }
+
+                newItem.transform.localScale =
+                    Vector3.one;
+
+                slot.currentItem =
+                    newItem;
+
+                RebuildItemCounts();
+
+                return true;
+            }
+        }
+
+        Debug.Log("Inventory Full");
+
+        return false;
+    }
+
+    // =========================
+    // REMOVE ITEMS
+    // =========================
+
+    public void RemoveItemsFromInventory(
+        int itemID,
+        int amountToRemove)
+    {
+        foreach (Transform slotTransform in inventoryPanel.transform)
+        {
+            if (amountToRemove <= 0)
+                break;
+
+            Slot slot =
+                slotTransform.GetComponent<Slot>();
+
+            if (slot == null)
+                continue;
+
+            if (slot.currentItem == null)
+                continue;
+
+            Item item =
+                slot.currentItem.GetComponent<Item>();
+
+            if (item == null)
+                continue;
+
+            if (item.ID != itemID)
+                continue;
+
+            int removed =
+                Mathf.Min(
+                    amountToRemove,
+                    item.quantity);
+
+            item.RemoveFromStack(removed);
+
+            amountToRemove -= removed;
+
+            if (item.quantity <= 0)
+            {
+                Destroy(slot.currentItem);
+
+                slot.currentItem = null;
+            }
+        }
+
+        RebuildItemCounts();
+    }
+
+    // =========================
+    // SAVE
+    // =========================
+
+    public List<InventorySaveData> GetInventoryItems()
+    {
+        List<InventorySaveData> invData =
+            new List<InventorySaveData>();
+
+        foreach (Transform slotTransform in inventoryPanel.transform)
+        {
+            Slot slot =
+                slotTransform.GetComponent<Slot>();
+
+            if (slot == null)
+                continue;
+
+            if (slot.currentItem == null)
+                continue;
+
+            Item item =
+                slot.currentItem.GetComponent<Item>();
+
+            if (item == null)
+                continue;
+
+            invData.Add(
+                new InventorySaveData
+                {
+                    itemID = item.ID,
+                    slotIndex =
+                        slotTransform.GetSiblingIndex(),
+                    quantity = item.quantity
+                });
         }
 
         return invData;
     }
 
     // =========================
-    // LOAD INVENTORY
+    // LOAD
     // =========================
 
     public void SetInventoryItems(
         List<InventorySaveData> inventorySaveData)
     {
-        // CLEAR INVENTORY
-        foreach (Transform child
-            in inventoryPanel.transform)
-        {
-            Destroy(child.gameObject);
-        }
+        if (inventorySaveData == null)
+            return;
 
-        // CREATE NEW SLOTS
-        for (int i = 0; i < slotCount; i++)
+        // CLEAR
+        foreach (Transform slotTransform in inventoryPanel.transform)
         {
-            Instantiate(
-                slotPrefab,
-                inventoryPanel.transform);
-        }
+            Slot slot =
+                slotTransform.GetComponent<Slot>();
 
-        // LOAD ITEMS
-        foreach (InventorySaveData data
-            in inventorySaveData)
-        {
-            if (data.slotIndex < slotCount)
+            if (slot != null &&
+                slot.currentItem != null)
             {
-                Slot slot =
-                    inventoryPanel.transform
-                    .GetChild(data.slotIndex)
-                    .GetComponent<Slot>();
+                Destroy(slot.currentItem);
 
-                GameObject itemPrefab =
-                    itemDictionary.GetItemPrefab(
-                        data.itemID);
-
-                if (itemPrefab != null)
-                {
-                    GameObject item =
-                        Instantiate(
-                            itemPrefab,
-                            slot.transform);
-
-                    item.GetComponent<RectTransform>()
-                        .anchoredPosition =
-                        Vector2.zero;
-
-                    item.transform.localScale =
-                        Vector3.one;
-
-                    Item itemComponent =
-                        item.GetComponent<Item>();
-
-                    if (itemComponent != null)
-                    {
-                        itemComponent.quantity =
-                            data.quantity;
-
-                        itemComponent
-                            .UpdateQuantityDisplay();
-                    }
-
-                    slot.currentItem = item;
-                }
+                slot.currentItem = null;
             }
         }
+
+        // LOAD
+        foreach (InventorySaveData data in inventorySaveData)
+        {
+            if (data.slotIndex >= slotCount)
+                continue;
+
+            Slot slot =
+                inventoryPanel.transform
+                .GetChild(data.slotIndex)
+                .GetComponent<Slot>();
+
+            GameObject itemPrefab =
+                itemDictionary.GetItemPrefab(
+                    data.itemID);
+
+            if (itemPrefab == null)
+                continue;
+
+            GameObject item =
+                Instantiate(
+                    itemPrefab,
+                    slot.transform);
+
+            RectTransform rect =
+                item.GetComponent<RectTransform>();
+
+            if (rect != null)
+            {
+                rect.anchoredPosition =
+                    Vector2.zero;
+            }
+
+            item.transform.localScale =
+                Vector3.one;
+
+            Item itemComponent =
+                item.GetComponent<Item>();
+
+            if (itemComponent != null)
+            {
+                itemComponent.quantity =
+                    data.quantity;
+
+                itemComponent.UpdateQuantityDisplay();
+            }
+
+            slot.currentItem = item;
+        }
+
+        RebuildItemCounts();
     }
 }

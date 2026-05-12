@@ -1,5 +1,4 @@
 using Cinemachine;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,101 +13,283 @@ public class SaveController : MonoBehaviour
 
     private Chest[] chests;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         InitializeComponents();
+
         LoadGame();
     }
 
     private void InitializeComponents()
     {
-        // Define save location
-        saveLocation = Path.Combine(Application.persistentDataPath, "saveData.json");
+        saveLocation =
+            Path.Combine(
+                Application.persistentDataPath,
+                "saveData.json");
 
-        inventoryController = FindObjectOfType<InventoryController>();
-        hotbarController = FindObjectOfType<HotbarController>();
+        inventoryController =
+            FindObjectOfType<InventoryController>();
 
-        chests = FindObjectsOfType<Chest>();
+        hotbarController =
+            FindObjectOfType<HotbarController>();
+
+        chests =
+            FindObjectsOfType<Chest>();
     }
+
+    // =========================
+    // AUTO SAVE
+    // =========================
+
+    private void OnApplicationQuit()
+    {
+        SaveGame();
+    }
+
+    // =========================
+    // SAVE
+    // =========================
 
     public void SaveGame()
     {
-        SaveData saveData = new SaveData
-        {
-            playerPosition = GameObject.FindGameObjectWithTag("Player").transform.position,
+        if (inventoryController == null)
+            return;
 
-            mapBoundary = FindObjectOfType<CinemachineConfiner>()
-                .m_BoundingShape2D.gameObject.name,
+        GameObject player =
+            GameObject.FindGameObjectWithTag("Player");
 
-            inventorySaveData = inventoryController.GetInventoryItems(),
+        if (player == null)
+            return;
 
-            hotbarSaveData = hotbarController.GetHotbarItems(),
+        CinemachineConfiner confiner =
+            FindObjectOfType<CinemachineConfiner>();
 
-            chestSaveData = GetChestState()
-        };
+        SaveData saveData =
+            new SaveData
+            {
+                playerPosition =
+                    player.transform.position,
 
-        File.WriteAllText(saveLocation, JsonUtility.ToJson(saveData, true));
+                mapBoundary =
+                    confiner != null &&
+                    confiner.m_BoundingShape2D != null
+                    ? confiner.m_BoundingShape2D.gameObject.name
+                    : "",
+
+                inventorySaveData =
+                    inventoryController.GetInventoryItems(),
+
+                hotbarSaveData =
+                    hotbarController != null
+                    ? hotbarController.GetHotbarItems()
+                    : new List<InventorySaveData>(),
+
+                chestSaveData =
+                    GetChestState(),
+
+                questProgressData =
+                    QuestController.Instance != null
+                    ? QuestController.Instance.activateQuests
+                    : new List<Quest.QuestProgress>(),
+
+                handedInQuestIDs =
+                    QuestController.Instance != null
+                    ? QuestController.Instance.handInQuestIDs
+                    : new List<string>()
+            };
+
+        string json =
+            JsonUtility.ToJson(
+                saveData,
+                true);
+
+        File.WriteAllText(
+            saveLocation,
+            json);
+
+        Debug.Log("Game Saved");
     }
+
+    // =========================
+    // CHESTS
+    // =========================
 
     private List<ChestSaveData> GetChestState()
     {
-        List<ChestSaveData> chestStates = new List<ChestSaveData>();
+        List<ChestSaveData> chestStates =
+            new List<ChestSaveData>();
 
         foreach (Chest chest in chests)
         {
-            ChestSaveData chestSaveData = new ChestSaveData
-            {
-                chestID = chest.ChestID,
-                isOpened = chest.IsOpened,
-            };
+            if (chest == null)
+                continue;
 
-            chestStates.Add(chestSaveData);
+            ChestSaveData chestSaveData =
+                new ChestSaveData
+                {
+                    chestID =
+                        chest.ChestID,
+
+                    isOpened =
+                        chest.IsOpened
+                };
+
+            chestStates.Add(
+                chestSaveData);
         }
 
         return chestStates;
     }
 
+    // =========================
+    // LOAD
+    // =========================
+
     public void LoadGame()
     {
-        if (File.Exists(saveLocation))
+        if (!File.Exists(saveLocation))
         {
-            SaveData saveData =
-                JsonUtility.FromJson<SaveData>(File.ReadAllText(saveLocation));
+            CreateNewSave();
 
-            GameObject.FindGameObjectWithTag("Player").transform.position =
+            return;
+        }
+
+        SaveData saveData =
+            JsonUtility.FromJson<SaveData>(
+                File.ReadAllText(saveLocation));
+
+        if (saveData == null)
+            return;
+
+        // =========================
+        // PLAYER
+        // =========================
+
+        GameObject player =
+            GameObject.FindGameObjectWithTag("Player");
+
+        if (player != null)
+        {
+            player.transform.position =
                 saveData.playerPosition;
-
-            FindObjectOfType<CinemachineConfiner>().m_BoundingShape2D =
-                GameObject.Find(saveData.mapBoundary)
-                .GetComponent<PolygonCollider2D>();
-
-            inventoryController.SetInventoryItems(saveData.inventorySaveData);
-
-            hotbarController.SetHotbarItems(saveData.hotbarSaveData);
-
-            LoadChestStates(saveData.chestSaveData);
         }
-        else
+
+        // =========================
+        // MAP BOUNDARY
+        // =========================
+
+        CinemachineConfiner confiner =
+            FindObjectOfType<CinemachineConfiner>();
+
+        if (confiner != null &&
+            !string.IsNullOrEmpty(
+                saveData.mapBoundary))
         {
-            SaveGame();
+            GameObject boundaryObject =
+                GameObject.Find(
+                    saveData.mapBoundary);
 
-            inventoryController.SetInventoryItems(new List<InventorySaveData>());
+            if (boundaryObject != null)
+            {
+                PolygonCollider2D boundary =
+                    boundaryObject.GetComponent<PolygonCollider2D>();
 
-            hotbarController.SetHotbarItems(new List<InventorySaveData>());
+                if (boundary != null)
+                {
+                    confiner.m_BoundingShape2D =
+                        boundary;
+                }
+            }
         }
+
+        // =========================
+        // INVENTORY
+        // =========================
+
+        if (saveData.inventorySaveData != null)
+        {
+            inventoryController.SetInventoryItems(
+                saveData.inventorySaveData);
+        }
+
+        // =========================
+        // HOTBAR
+        // =========================
+
+        if (hotbarController != null &&
+            saveData.hotbarSaveData != null)
+        {
+            hotbarController.SetHotbarItems(
+                saveData.hotbarSaveData);
+        }
+
+        // =========================
+        // CHESTS
+        // =========================
+
+        if (saveData.chestSaveData != null)
+        {
+            LoadChestStates(
+                saveData.chestSaveData);
+        }
+
+        // =========================
+        // QUESTS
+        // =========================
+
+        if (QuestController.Instance != null)
+        {
+            QuestController.Instance.LoadQuestProgress(
+                saveData.questProgressData);
+
+            QuestController.Instance.handInQuestIDs =
+                saveData.handedInQuestIDs != null
+                ? saveData.handedInQuestIDs
+                : new List<string>();
+        }
+
+        Debug.Log("Game Loaded");
     }
 
-    private void LoadChestStates(List<ChestSaveData> chestStates)
+    // =========================
+    // LOAD CHESTS
+    // =========================
+
+    private void LoadChestStates(
+        List<ChestSaveData> chestStates)
     {
         foreach (Chest chest in chests)
         {
-            ChestSaveData chestsaveData = chestStates.FirstOrDefault(c => c.chestID == chest.ChestID);
+            if (chest == null)
+                continue;
 
-            if (chestsaveData != null)
+            ChestSaveData chestSaveData =
+                chestStates.FirstOrDefault(
+                    c => c.chestID == chest.ChestID);
+
+            if (chestSaveData != null)
             {
-                chest.SetOpened(chestsaveData.isOpened);
+                chest.SetOpened(
+                    chestSaveData.isOpened);
             }
         }
+    }
+
+    // =========================
+    // CREATE SAVE
+    // =========================
+
+    private void CreateNewSave()
+    {
+        inventoryController.SetInventoryItems(
+            new List<InventorySaveData>());
+
+        if (hotbarController != null)
+        {
+            hotbarController.SetHotbarItems(
+                new List<InventorySaveData>());
+        }
+
+        SaveGame();
     }
 }

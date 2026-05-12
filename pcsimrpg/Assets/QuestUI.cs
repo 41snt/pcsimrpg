@@ -33,7 +33,7 @@ public class QuestUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        foreach (var quest in testQuests)
+        foreach (var quest in QuestController.Instance.activateQuests)
         {
             GameObject entry = Instantiate(questEntryPrefab, questListContent);
 

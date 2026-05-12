@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d65ee17f280e53e4dbd0ace53d4514ad, type: 3}
-  m_Name: New Quest
+  m_Name: awit
   m_EditorClassIdentifier: 
-  questID: CollectPcParts_9d3237df-bffc-4b2a-be11-7968038a8036
-  questName: CollectPcParts
-  description: Collect Ram
+  questID: ohmyniggas_5efa4d63-f8c5-4184-9478-4f757e99bb41
+  questName: oh my niggas
+  description: 
   objectives:
   - objectiveID: 1
-    description: Collect 5 Rams
+    description: 
     type: 0
-    requiredAmount: 5
+    requiredAmount: 3
     currentAmount: 0
