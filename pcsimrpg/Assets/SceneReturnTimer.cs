@@ -10,6 +10,11 @@ public class SceneReturnTimer : MonoBehaviour
     private void Start()
     {
         timer = returnTime;
+
+        // IMPORTANT FIX
+        PauseController.SetPause(false);
+
+        Time.timeScale = 1f;
     }
 
     private void Update()
@@ -18,7 +23,14 @@ public class SceneReturnTimer : MonoBehaviour
 
         if (timer <= 0f)
         {
-            string lastScene = PlayerPrefs.GetString("LastScene");
+            // UNPAUSE BEFORE RETURNING
+            PauseController.SetPause(false);
+
+            Time.timeScale = 1f;
+
+            string lastScene =
+                PlayerPrefs.GetString("LastScene");
+
             SceneManager.LoadScene(lastScene);
         }
     }

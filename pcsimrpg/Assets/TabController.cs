@@ -8,7 +8,8 @@ public class TabController : MonoBehaviour
     public Image[] tabImages;
     public GameObject[] pages;
 
-    // Start is called before the first frame update
+    public GameObject splitButton; // drag split button here
+
     void Start()
     {
         ActivateTab(0);
@@ -24,5 +25,12 @@ public class TabController : MonoBehaviour
 
         pages[tabNo].SetActive(true);
         tabImages[tabNo].color = Color.white;
+
+        // Show split button only on inventory page
+        if (splitButton != null)
+        {
+            // 0 = inventory tab
+            splitButton.SetActive(tabNo == 2);
+        }
     }
 }

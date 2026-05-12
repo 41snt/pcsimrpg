@@ -16,9 +16,38 @@ public class NPCSceneTrigger : MonoBehaviour
         triggered = true;
         timer = delay;
 
-        PlayerPrefs.SetString("LastScene", SceneManager.GetActiveScene().name);
+        // SAVE CURRENT SCENE
+        PlayerPrefs.SetString(
+            "LastScene",
+            SceneManager.GetActiveScene().name);
 
-        Debug.Log("Cutscene triggered from choice at index: " + index);
+        // SAVE PLAYER POSITION
+        GameObject player =
+            GameObject.FindGameObjectWithTag("Player");
+
+        if (player != null)
+        {
+            PlayerPrefs.SetFloat(
+                "PlayerX",
+                player.transform.position.x);
+
+            PlayerPrefs.SetFloat(
+                "PlayerY",
+                player.transform.position.y);
+        }
+
+        // CREATE REAL SAVE
+        SaveController saveController =
+            FindObjectOfType<SaveController>();
+
+        if (saveController != null)
+        {
+            saveController.SaveGame();
+        }
+
+        Debug.Log(
+            "Cutscene triggered from choice at index: "
+            + index);
     }
 
     private void Update()
@@ -29,6 +58,10 @@ public class NPCSceneTrigger : MonoBehaviour
 
         if (timer <= 0f)
         {
+            PauseController.SetPause(false);
+
+            Time.timeScale = 1f;
+
             SceneManager.LoadScene(cutsceneScene);
         }
     }

@@ -37,16 +37,11 @@ public class EnemyHealth : MonoBehaviour
 
         Debug.Log("💀 Enemy died");
 
-        if (isAOEEnemy && QuestManager.Instance != null)
-        {
-            QuestManager.Instance.AOEEnemyKilled();
-        }
-
         if (spawner != null)
         {
             spawner.RequestRespawn(gameObject);
         }
 
-        gameObject.SetActive(false); 
+        gameObject.SetActive(false);
     }
 }
