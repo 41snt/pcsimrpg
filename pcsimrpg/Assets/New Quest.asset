@@ -12,14 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d65ee17f280e53e4dbd0ace53d4514ad, type: 3}
   m_Name: New Quest
   m_EditorClassIdentifier: 
-  questID: Pc_Parts_Find_Them_7a1fae03-e5f7-4521-aff2-b22db573d26a
-  questName: Pc Parts Find Them
-  description: 'Find The PC Parts
-
-'
+  questID: CollectPcParts_9d6a0478-7aba-4202-b3aa-dfe235b8b1ee
+  questName: CollectPcParts
+  description: 
   objectives:
   - objectiveID: 1
-    description: Find the Ram
+    description: Collect 5 Rams
     type: 0
-    requiredAmount: 10
+    requiredAmount: 5
     currentAmount: 0

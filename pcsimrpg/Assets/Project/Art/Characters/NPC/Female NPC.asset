@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0e1c5a9e387f12846a6554468c3ebdb3, type: 3}
-  m_Name: RodHolt
+  m_Name: Female NPC
   m_EditorClassIdentifier: 
-  npcName: Widow
-  npcPortrait: {fileID: 21300000, guid: b1bcde825e061454b8eb99bb70436968, type: 3}
+  npcName: Ada Lovelace
+  npcPortrait: {fileID: 21300000, guid: 58528e5f5ad0a804e904bf5817fdf4dc, type: 3}
   dialogueLines:
   - Hello!
   - Are u looking for the head of this region?

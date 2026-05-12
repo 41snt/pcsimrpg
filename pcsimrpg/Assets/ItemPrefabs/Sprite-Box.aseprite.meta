@@ -33,7 +33,7 @@ ScriptedImporter:
     spriteMeshType: 0
     alignment: 0
     spritePivot: {x: 0.5, y: 0.5}
-    spritePixelsToUnits: 32
+    spritePixelsToUnits: 16
     spriteBorder: {x: 0, y: 0, z: 0, w: 0}
     spriteGenerateFallbackPhysicsShape: 0
     generateCubemap: 6
@@ -95,7 +95,7 @@ ScriptedImporter:
     addSortingGroup: 1
     addShadowCasters: 0
   importFileNodeState: 1
-  platformSettingsDirtyTick: 639141742751141036
+  platformSettingsDirtyTick: 639141851228993898
   textureAssetName: 
   singleSpriteImportData:
   - name: 
@@ -119,11 +119,11 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
   animatedSpriteImportData:
-  - name: Sprite-Boxlong
+  - name: Sprite-Box
     originalName: 
     pivot: {x: 0.5, y: -0.05263158}
     alignment: 9
-    border: {x: 15, y: 16, z: 15, w: 15}
+    border: {x: 15, y: 15, z: 15, w: 15}
     rect:
       serializedVersion: 2
       x: 4
