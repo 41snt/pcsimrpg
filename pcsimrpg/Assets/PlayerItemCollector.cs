@@ -6,86 +6,29 @@ public class PlayerItemCollector : MonoBehaviour
 {
     private InventoryController inventoryController;
 
+    // Start is called before the first frame update
     void Start()
     {
-        inventoryController =
-            FindObjectOfType<InventoryController>();
+        inventoryController = FindObjectOfType<InventoryController>();
     }
 
-    private void OnTriggerEnter2D(
-        Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!collision.CompareTag("Item"))
-            return;
-
-        Item item =
-            collision.GetComponent<Item>();
-
-        if (item == null)
-            return;
-
-        bool itemAdded =
-            inventoryController.AddItem(
-                collision.gameObject);
-
-        if (!itemAdded)
-            return;
-
-        // =========================
-        // UPDATE QUESTS
-        // =========================
-
-        if (QuestController.Instance != null)
+        if (collision.CompareTag("Item"))
         {
-            foreach (QuestProgress quest
-                in QuestController.Instance
-                .activateQuests)
+            Item item = collision.GetComponent<Item>();
+            if (item != null)
             {
-                if (quest == null)
-                    continue;
+                //Add item inventory
+            }
 
-                if (quest.objectives == null)
-                    continue;
+            bool itemAdded = inventoryController.AddItem(collision.gameObject);
 
-                foreach (QuestObjective objective
-                    in quest.objectives)
-                {
-                    if (objective == null)
-                        continue;
-
-                    // MATCH ITEM NAME
-                    if (objective.objectiveID ==
-                        item.Name)
-                    {
-                        objective.currentAmount++;
-
-                        Debug.Log(
-                            "Quest Updated: "
-                            + objective.description
-                            + " "
-                            + objective.currentAmount
-                            + "/"
-                            + objective.requiredAmount);
-                    }
-                }
+            if (itemAdded)
+            {
+                item.PickUp();
+                Destroy(collision.gameObject);
             }
         }
-
-        // PICKUP UI
-        if (ItemPickupUIController.Instance != null)
-        {
-            Sprite itemIcon =
-                item.GetComponent<UnityEngine.UI.Image>()
-                ?.sprite;
-
-            ItemPickupUIController.Instance
-                .ShowItemPickup(
-                    item.Name,
-                    itemIcon);
-        }
-
-        item.PickUp();
-
-        Destroy(collision.gameObject);
     }
 }

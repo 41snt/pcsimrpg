@@ -1,81 +1,56 @@
+using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using TMPro;
 
 public class QuestUI : MonoBehaviour
 {
     public Transform questListContent;
-
     public GameObject questEntryPrefab;
-
     public GameObject objectiveTextPrefab;
 
-    private void Update()
+    public Quest testQuest;
+    public int testQuestAmount;
+
+    private List<Quest.QuestProgress> testQuests = new();
+
+    // Start is called before the first frame update
+    void Start()
     {
-        RefreshUI();
+        for (int i = 0; i < testQuestAmount; i++)
+        {
+            testQuests.Add(new Quest.QuestProgress(testQuest));
+        }
+
+        UpdateQuestUI();
     }
 
-    public void RefreshUI()
+    public void UpdateQuestUI()
     {
-        // CLEAR OLD UI
-        foreach (Transform child
-            in questListContent)
+        // Destroy existing quest entries
+        foreach (Transform child in questListContent)
         {
             Destroy(child.gameObject);
         }
 
-        if (QuestController.Instance == null)
-            return;
-
-        List<QuestProgress> quests =
-            QuestController.Instance.activateQuests;
-
-        foreach (QuestProgress progress
-            in quests)
+        foreach (var quest in QuestController.Instance.activateQuests)
         {
-            if (progress == null)
-                continue;
+            GameObject entry = Instantiate(questEntryPrefab, questListContent);
 
-            if (progress.quest == null)
-                continue;
+            TMP_Text questNameText = entry.transform.Find("QuestNameText").GetComponent<TMP_Text>();
 
-            // CREATE QUEST ENTRY
-            GameObject questEntry =
-                Instantiate(
-                    questEntryPrefab,
-                    questListContent);
+            Transform objectiveList = entry.transform.Find("ObjectiveList");
 
-            TMP_Text questNameText =
-                questEntry.GetComponentInChildren<TMP_Text>();
+            questNameText.text = quest.quest.questName;
 
-            if (questNameText != null)
+            foreach (var objective in quest.objectives)
             {
-                questNameText.text =
-                    progress.quest.questName;
-            }
+                GameObject objTextGO = Instantiate(objectiveTextPrefab, objectiveList);
 
-            // OBJECTIVES
-            foreach (QuestObjective objective
-                in progress.objectives)
-            {
-                GameObject objectiveObj =
-                    Instantiate(
-                        objectiveTextPrefab,
-                        questEntry.transform);
+                TMP_Text objText = objTextGO.GetComponent<TMP_Text>();
 
-                TMP_Text objectiveText =
-                    objectiveObj
-                    .GetComponent<TMP_Text>();
-
-                if (objectiveText != null)
-                {
-                    objectiveText.text =
-                        objective.description
-                        + " "
-                        + objective.currentAmount
-                        + "/"
-                        + objective.requiredAmount;
-                }
+                objText.text =
+                    $"{objective.description} ({objective.currentAmount}/{objective.requiredAmount})";
             }
         }
     }

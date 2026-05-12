@@ -1,73 +1,53 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Chest : MonoBehaviour, IInteractable
 {
-    [Header("Chest State")]
-    public bool isOpened;
+    public bool IsOpened { get; private set; }
+    public string ChestID { get; private set; }
 
-    [Header("Chest ID")]
-    public string chestID;
-
-    [Header("Loot")]
-    public GameObject itemPrefab;
-
-    [Header("Visual")]
+    public GameObject itemPrefab; // Item that chest drops
     public Sprite openedSprite;
 
-    private SpriteRenderer spriteRenderer;
-
-    private void Awake()
+    // Start is called before the first frame update
+    void Start()
     {
-        spriteRenderer =
-            GetComponent<SpriteRenderer>();
-
-        // GENERATE ID
-        if (string.IsNullOrEmpty(chestID))
-        {
-            chestID =
-                gameObject.name + "_" +
-                transform.position.x + "_" +
-                transform.position.y;
-        }
+        ChestID ??= GlobalHelper.GenerateUniqueID(gameObject);
     }
 
     public bool CanInteract()
     {
-        return !isOpened;
+        return !IsOpened;
     }
 
     public void Interact()
     {
-        if (!CanInteract())
-            return;
+        if (!CanInteract()) return;
 
         OpenChest();
     }
 
-    public void OpenChest()
+    private void OpenChest()
     {
         SetOpened(true);
 
-        if (itemPrefab != null)
+        // Drop Item
+        if (itemPrefab)
         {
-            Instantiate(
+            GameObject droppedItem = Instantiate(
                 itemPrefab,
-                transform.position +
-                Vector3.down,
-                Quaternion.identity);
+                transform.position + Vector3.down,
+                Quaternion.identity
+            );
         }
     }
 
     public void SetOpened(bool opened)
     {
-        isOpened = opened;
-
-        if (isOpened &&
-            openedSprite != null &&
-            spriteRenderer != null)
+        if (IsOpened = opened)
         {
-            spriteRenderer.sprite =
-                openedSprite;
+            GetComponent<SpriteRenderer>().sprite = openedSprite;
         }
     }
 }

@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d65ee17f280e53e4dbd0ace53d4514ad, type: 3}
   m_Name: awit
   m_EditorClassIdentifier: 
-  questID: ohmyniggas_5efa4d63-f8c5-4184-9478-4f757e99bb41
-  questName: oh my niggas
+  questID: GatherPcParts_cf930b37-2e6e-4da7-ad3b-9380e4f5e169
+  questName: Gather Pc Parts
   description: 
   objectives:
   - objectiveID: 1
-    description: 
+    description: Gather 5 Rams
     type: 0
     requiredAmount: 3
     currentAmount: 0

@@ -3,27 +3,35 @@ using UnityEngine.SceneManagement;
 
 public class NPCSceneTrigger : MonoBehaviour
 {
-    [SerializeField] private string cutsceneScene = "Cutscene";
-    [SerializeField] private float delay = 2f;
+    [SerializeField]
+    private string cutsceneScene = "Cutscene";
+
+    [SerializeField]
+    private float delay = 2f;
 
     private bool triggered;
     private float timer;
 
     public void StartCutscene(int index)
     {
-        if (triggered) return;
+        if (triggered)
+            return;
 
         triggered = true;
+
         timer = delay;
 
         // SAVE CURRENT SCENE
         PlayerPrefs.SetString(
             "LastScene",
-            SceneManager.GetActiveScene().name);
+            SceneManager
+                .GetActiveScene()
+                .name);
 
         // SAVE PLAYER POSITION
         GameObject player =
-            GameObject.FindGameObjectWithTag("Player");
+            GameObject.FindGameObjectWithTag(
+                "Player");
 
         if (player != null)
         {
@@ -36,13 +44,13 @@ public class NPCSceneTrigger : MonoBehaviour
                 player.transform.position.y);
         }
 
-        // CREATE REAL SAVE
+        // OPTIONAL SAVE
         SaveController saveController =
             FindObjectOfType<SaveController>();
 
         if (saveController != null)
         {
-            saveController.ManualSave();
+            saveController.SaveGame();
         }
 
         Debug.Log(
@@ -52,17 +60,17 @@ public class NPCSceneTrigger : MonoBehaviour
 
     private void Update()
     {
-        if (!triggered) return;
+        if (!triggered)
+            return;
 
         timer -= Time.deltaTime;
 
         if (timer <= 0f)
         {
-            PauseController.SetPause(false);
-
             Time.timeScale = 1f;
 
-            SceneManager.LoadScene(cutsceneScene);
+            SceneManager.LoadScene(
+                cutsceneScene);
         }
     }
 }
