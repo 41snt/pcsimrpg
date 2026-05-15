@@ -6,7 +6,7 @@ public class PlayerMana : MonoBehaviour
     public int maxMana = 100;
     public int currentMana;
 
-    public Slider manaBar;
+    [SerializeField] private Slider manaBar;
 
     public int regenAmount = 10;
     public float regenInterval = 5f;
@@ -17,13 +17,17 @@ public class PlayerMana : MonoBehaviour
     {
         currentMana = maxMana;
 
-        manaBar.maxValue = maxMana;
-        manaBar.value = maxMana;
+        if (manaBar != null)
+        {
+            manaBar.maxValue = maxMana;
+            manaBar.value = currentMana;
+        }
     }
 
     void Update()
     {
-        if (currentMana >= maxMana) return;
+        if (currentMana >= maxMana)
+            return;
 
         regenTimer += Time.deltaTime;
 
@@ -32,7 +36,7 @@ public class PlayerMana : MonoBehaviour
             currentMana += regenAmount;
             currentMana = Mathf.Clamp(currentMana, 0, maxMana);
 
-            manaBar.value = currentMana;
+            UpdateManaBar();
 
             regenTimer = 0f;
         }
@@ -43,10 +47,20 @@ public class PlayerMana : MonoBehaviour
         if (currentMana >= amount)
         {
             currentMana -= amount;
-            manaBar.value = currentMana;
+
+            UpdateManaBar();
+
             return true;
         }
 
         return false;
+    }
+
+    void UpdateManaBar()
+    {
+        if (manaBar != null)
+        {
+            manaBar.value = currentMana;
+        }
     }
 }

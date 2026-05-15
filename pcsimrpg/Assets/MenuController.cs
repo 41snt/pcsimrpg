@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MenuController : MonoBehaviour
@@ -12,25 +10,22 @@ public class MenuController : MonoBehaviour
         menuCanvas.SetActive(false);
     }
 
-    void Update()
+    public void ToggleMenu()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        // Prevent opening another menu if already paused
+        if (!menuCanvas.activeSelf && PauseController.IsGamePaused)
         {
-            // Prevent opening another menu if game is already paused
-            if (!menuCanvas.activeSelf && PauseController.IsGamePaused)
-            {
-                return;
-            }
-
-            bool isOpen = !menuCanvas.activeSelf;
-
-            menuCanvas.SetActive(isOpen);
-
-            // Hide gameplay UI when menu is open
-            gameplayUI.SetActive(!isOpen);
-
-            // Pause system
-            PauseController.SetPause(isOpen);
+            return;
         }
+
+        bool isOpen = !menuCanvas.activeSelf;
+
+        menuCanvas.SetActive(isOpen);
+
+        // Hide gameplay UI when menu is open
+        gameplayUI.SetActive(!isOpen);
+
+        // Pause system
+        PauseController.SetPause(isOpen);
     }
 }
