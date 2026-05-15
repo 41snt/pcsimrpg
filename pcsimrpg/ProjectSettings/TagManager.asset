@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - CPU
+  - GPU
+  - RAM
+  - SSD
+  - PSU
+  - COOLER
   layers:
   - Default
   - TransparentFX

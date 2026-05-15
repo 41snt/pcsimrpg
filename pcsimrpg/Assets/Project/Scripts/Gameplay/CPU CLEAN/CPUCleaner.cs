@@ -11,15 +11,21 @@ public class CPUCleaner : MonoBehaviour
     public GameObject brushUI;
     public Button cleanButton;
     public TextMeshProUGUI dustText;
-    public Button thermalPasteButton;
 
-    [Header("Instruction Panel & Animation")]
+    [Header("Buttons")]
+    public Button thermalPasteButton;
+    public Button repairButton;
+
+    [Header("Repair Image")]
+    public GameObject repairImage;
+
+    [Header("Instruction Panel")]
     public GameObject instructionPanel;
-    [SerializeField] private float animationSpeed = 10f;
-    [SerializeField] private float startScale = 0.1f;
+    public float animationSpeed = 10f;
+    public float startScale = 0.1f;
 
     private Vector3 targetScale;
-    private bool isPanelClosing = false;
+    private bool isClosing = false;
 
     [Header("Settings")]
     public float cleanSpeed = 0.5f;
@@ -28,7 +34,7 @@ public class CPUCleaner : MonoBehaviour
     private Vector3 lastMousePos;
 
     private bool cleaningFinished = false;
-    private bool mouseReleasedAfterClean = false;
+    private bool mouseReleased = false;
 
     void Start()
     {
@@ -39,7 +45,12 @@ public class CPUCleaner : MonoBehaviour
         if (thermalPasteButton != null)
             thermalPasteButton.interactable = false;
 
-        // Setup Animation Initial State
+        if (repairButton != null)
+            repairButton.interactable = false;
+
+        if (repairImage != null)
+            repairImage.SetActive(false);
+
         if (instructionPanel != null)
         {
             instructionPanel.transform.localScale = Vector3.one * startScale;
@@ -47,36 +58,39 @@ public class CPUCleaner : MonoBehaviour
         }
 
         targetScale = Vector3.one;
+
         UpdateDustText();
+
         lastMousePos = Input.mousePosition;
     }
 
     void Update()
     {
-        // --- PANEL ANIMATION LOGIC ---
         if (instructionPanel != null && instructionPanel.activeSelf)
         {
-            instructionPanel.transform.localScale = Vector3.Lerp(
-                instructionPanel.transform.localScale,
+            instructionPanel.transform.localScale =
+                Vector3.Lerp(instructionPanel.transform.localScale,
                 targetScale,
-                Time.deltaTime * animationSpeed
-            );
+                Time.deltaTime * animationSpeed);
 
-            // Turn off object once it has shrunk enough
-            if (isPanelClosing && instructionPanel.transform.localScale.x < 0.15f)
+            if (isClosing && instructionPanel.transform.localScale.x < 0.15f)
             {
                 instructionPanel.SetActive(false);
-                isPanelClosing = false;
+                isClosing = false;
             }
         }
 
-        // --- CLEANING LOGIC ---
         Vector3 mousePos = Input.mousePosition;
 
-        if (!cleaningFinished && brushUI.activeSelf && Input.GetMouseButton(0) && IsMouseOverCPU() && mousePos != lastMousePos)
+        if (!cleaningFinished &&
+            brushUI.activeSelf &&
+            Input.GetMouseButton(0) &&
+            IsMouseOverCPU() &&
+            mousePos != lastMousePos)
         {
-            float speedMultiplier = (mousePos - lastMousePos).magnitude * 0.01f;
-            dustAmount -= cleanSpeed * Time.deltaTime * speedMultiplier;
+            float speed = (mousePos - lastMousePos).magnitude * 0.01f;
+
+            dustAmount -= cleanSpeed * Time.deltaTime * speed;
             dustAmount = Mathf.Clamp01(dustAmount);
 
             Color c = dustImage.color;
@@ -84,20 +98,22 @@ public class CPUCleaner : MonoBehaviour
             dustImage.color = c;
 
             dustBar.value = dustAmount;
+
             UpdateDustText();
 
             if (dustAmount <= 0.01f)
-            {
                 FinishCleaning();
-            }
         }
 
-        // Wait for mouse release before enabling paste
-        if (cleaningFinished && !mouseReleasedAfterClean && !Input.GetMouseButton(0))
+        if (cleaningFinished && !mouseReleased && !Input.GetMouseButton(0))
         {
-            mouseReleasedAfterClean = true;
+            mouseReleased = true;
+
             if (thermalPasteButton != null)
                 thermalPasteButton.interactable = true;
+
+            if (repairButton != null)
+                repairButton.interactable = true;
         }
 
         lastMousePos = mousePos;
@@ -106,40 +122,44 @@ public class CPUCleaner : MonoBehaviour
     public void EnableCleaning()
     {
         brushUI.SetActive(true);
+
         dustBar.gameObject.SetActive(true);
         dustText.gameObject.SetActive(true);
+
         cleanButton.interactable = false;
 
-        // Show and Start Animation
         if (instructionPanel != null)
         {
             instructionPanel.SetActive(true);
             instructionPanel.transform.localScale = Vector3.one * startScale;
             targetScale = Vector3.one;
-            isPanelClosing = false;
+            isClosing = false;
         }
 
-        lastMousePos = Input.mousePosition;
         cleaningFinished = false;
-        mouseReleasedAfterClean = false;
+        mouseReleased = false;
+
+        lastMousePos = Input.mousePosition;
     }
 
-    private void FinishCleaning()
+    void FinishCleaning()
     {
         dustAmount = 0f;
+
         brushUI.SetActive(false);
+
         dustBar.gameObject.SetActive(false);
         dustText.gameObject.SetActive(false);
+
         cleanButton.interactable = false;
 
         cleaningFinished = true;
-        mouseReleasedAfterClean = false;
+        mouseReleased = false;
 
-        // Start Shrink Animation
         if (instructionPanel != null)
         {
             targetScale = Vector3.one * startScale;
-            isPanelClosing = true;
+            isClosing = true;
         }
     }
 
@@ -151,12 +171,14 @@ public class CPUCleaner : MonoBehaviour
     void UpdateDustText()
     {
         int percent = Mathf.RoundToInt(dustAmount * 100f);
+
         dustText.text = "DUST: " + percent + "%";
 
-        if (percent > 50) dustText.color = Color.red;
-        else if (percent > 10) dustText.color = Color.yellow;
-        else dustText.color = Color.green;
+        if (percent > 50)
+            dustText.color = Color.red;
+        else if (percent > 10)
+            dustText.color = Color.yellow;
+        else
+            dustText.color = Color.green;
     }
-
-    public bool IsClean() => dustAmount <= 0.01f;
 }

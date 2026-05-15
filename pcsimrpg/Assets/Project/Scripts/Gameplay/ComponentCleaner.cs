@@ -5,31 +5,42 @@ using TMPro;
 public class ComponentCleaner : MonoBehaviour
 {
     [Header("References")]
-    public RectTransform componentArea;   // The target component (CPU, GPU, RAM, etc.)
-    public GameObject brushUI;            // Brush GameObject
-    public Image dustImage;               // Dust overlay image
-    public Slider dustBar;                // Slider showing dust amount
-    public TextMeshProUGUI dustText;      // Text showing dust percentage
-    public Button cleanButton;            // Optional clean button (disable when done)
+    public RectTransform componentArea;
+    public GameObject brushUI;
+    public Image dustImage;
+    public Slider dustBar;
+    public TextMeshProUGUI dustText;
+    public Button cleanButton;
 
-    [Header("Instruction Panel & Animation")]
+    [Header("Buttons To Unlock")]
+    public Button repairButton;
+    public Button nextStepButton;
+
+    [Header("Repair Image")]
+    public GameObject repairImage;
+
+    [Header("Instruction Panel")]
     public GameObject instructionPanel;
-    [SerializeField] private float animationSpeed = 10f;
-    [SerializeField] private float startScale = 0.1f;
+    public float animationSpeed = 10f;
+    public float startScale = 0.1f;
 
-    private Vector3 targetScale = Vector3.one;
-    private bool isPanelClosing = false;
+    [Header("UI Layer Fix (IMPORTANT)")]
+    public bool bringDustToFront = true;
+
+    private Vector3 targetScale;
+    private bool isClosing = false;
 
     [Header("Settings")]
     public float cleanSpeed = 0.5f;
 
     private float dustAmount = 1f;
     private Vector3 lastMousePos;
+
     private bool cleaningFinished = false;
+    private bool mouseReleased = false;
 
     void Start()
     {
-        // Initialize dust slider
         if (dustBar != null)
         {
             dustBar.minValue = 0f;
@@ -37,46 +48,71 @@ public class ComponentCleaner : MonoBehaviour
             dustBar.value = 1f;
         }
 
-        // Initialize instruction panel
+        if (repairButton != null)
+            repairButton.interactable = false;
+
+        if (nextStepButton != null)
+            nextStepButton.interactable = false;
+
+        if (repairImage != null)
+            repairImage.SetActive(false);
+
         if (instructionPanel != null)
         {
-            instructionPanel.transform.localScale = Vector3.one * startScale;
+            instructionPanel.transform.localScale =
+                Vector3.one * startScale;
+
             instructionPanel.SetActive(false);
         }
 
+        targetScale = Vector3.one;
+
         UpdateDustText();
+
         lastMousePos = Input.mousePosition;
     }
 
     void Update()
     {
-        Vector3 mousePos = Input.mousePosition;
-
-        // --- Instruction Panel Animation ---
-        if (instructionPanel != null && instructionPanel.activeSelf)
+        // 🔥 FORCE DUST TO BE ON TOP (fixes your issue)
+        if (bringDustToFront && dustImage != null)
         {
-            instructionPanel.transform.localScale = Vector3.Lerp(
-                instructionPanel.transform.localScale,
-                targetScale,
-                Time.deltaTime * animationSpeed
-            );
+            dustImage.transform.SetAsLastSibling();
+        }
 
-            if (isPanelClosing && instructionPanel.transform.localScale.x < 0.15f)
+        if (instructionPanel != null &&
+            instructionPanel.activeSelf)
+        {
+            instructionPanel.transform.localScale =
+                Vector3.Lerp(
+                    instructionPanel.transform.localScale,
+                    targetScale,
+                    Time.deltaTime * animationSpeed
+                );
+
+            if (isClosing &&
+                instructionPanel.transform.localScale.x < 0.15f)
             {
                 instructionPanel.SetActive(false);
-                isPanelClosing = false;
+                isClosing = false;
             }
         }
 
-        // --- Cleaning Logic ---
-        if (!cleaningFinished && brushUI != null && brushUI.activeSelf &&
-            Input.GetMouseButton(0) && IsMouseOverComponent() && mousePos != lastMousePos)
+        Vector3 mousePos = Input.mousePosition;
+
+        if (!cleaningFinished &&
+            brushUI != null &&
+            brushUI.activeSelf &&
+            Input.GetMouseButton(0) &&
+            IsMouseOverComponent() &&
+            mousePos != lastMousePos)
         {
-            float speedMultiplier = (mousePos - lastMousePos).magnitude * 0.01f;
+            float speedMultiplier =
+                (mousePos - lastMousePos).magnitude * 0.01f;
+
             dustAmount -= cleanSpeed * Time.deltaTime * speedMultiplier;
             dustAmount = Mathf.Clamp01(dustAmount);
 
-            // Update dust overlay
             if (dustImage != null)
             {
                 Color c = dustImage.color;
@@ -84,44 +120,62 @@ public class ComponentCleaner : MonoBehaviour
                 dustImage.color = c;
             }
 
-            // Update slider & text
-            if (dustBar != null) dustBar.value = dustAmount;
+            if (dustBar != null)
+                dustBar.value = dustAmount;
+
             UpdateDustText();
 
-            // Check if cleaning finished
             if (dustAmount <= 0.01f)
-            {
-                dustAmount = 0f;
                 FinishCleaning();
-            }
+        }
+
+        if (cleaningFinished &&
+            !mouseReleased &&
+            !Input.GetMouseButton(0))
+        {
+            mouseReleased = true;
+
+            if (repairButton != null)
+                repairButton.interactable = true;
+
+            if (nextStepButton != null)
+                nextStepButton.interactable = true;
         }
 
         lastMousePos = mousePos;
     }
 
-    // --- Called by Button to Enable Cleaning ---
     public void EnableCleaning()
     {
         Debug.Log("Cleaning Enabled!");
 
-        if (brushUI != null) brushUI.SetActive(true);
+        if (brushUI != null)
+            brushUI.SetActive(true);
+
+        if (dustBar != null)
+            dustBar.gameObject.SetActive(true);
+
+        if (dustText != null)
+            dustText.gameObject.SetActive(true);
+
+        if (cleanButton != null)
+            cleanButton.interactable = false;
 
         if (instructionPanel != null)
         {
             instructionPanel.SetActive(true);
-            instructionPanel.transform.localScale = Vector3.one * startScale;
+            instructionPanel.transform.localScale =
+                Vector3.one * startScale;
+
             targetScale = Vector3.one;
-            isPanelClosing = false;
+            isClosing = false;
         }
 
-        if (dustBar != null) dustBar.gameObject.SetActive(true);
-        if (dustText != null) dustText.gameObject.SetActive(true);
-        if (cleanButton != null) cleanButton.interactable = false;
-
         cleaningFinished = false;
+        mouseReleased = false;
+
         dustAmount = 1f;
 
-        // Reset dust overlay
         if (dustImage != null)
         {
             Color c = dustImage.color;
@@ -129,50 +183,67 @@ public class ComponentCleaner : MonoBehaviour
             dustImage.color = c;
         }
 
-        if (dustBar != null) dustBar.value = dustAmount;
+        if (dustBar != null)
+            dustBar.value = dustAmount;
+
         UpdateDustText();
 
         lastMousePos = Input.mousePosition;
     }
 
-    // --- Finish Cleaning ---
-    private void FinishCleaning()
+    void FinishCleaning()
     {
+        dustAmount = 0f;
         cleaningFinished = true;
+        mouseReleased = false;
 
-        if (brushUI != null) brushUI.SetActive(false);
-        if (dustBar != null) dustBar.gameObject.SetActive(false);
-        if (dustText != null) dustText.gameObject.SetActive(false);
-        if (cleanButton != null) cleanButton.interactable = false;
+        if (brushUI != null)
+            brushUI.SetActive(false);
+
+        if (dustBar != null)
+            dustBar.gameObject.SetActive(false);
+
+        if (dustText != null)
+            dustText.gameObject.SetActive(false);
+
+        if (cleanButton != null)
+            cleanButton.interactable = false;
 
         if (instructionPanel != null)
         {
             targetScale = Vector3.one * startScale;
-            isPanelClosing = true;
+            isClosing = true;
         }
     }
 
-    // --- Mouse Over Component Check ---
     bool IsMouseOverComponent()
     {
-        if (componentArea == null) return false;
-        return RectTransformUtility.RectangleContainsScreenPoint(componentArea, Input.mousePosition);
+        if (componentArea == null)
+            return false;
+
+        return RectTransformUtility.RectangleContainsScreenPoint(
+            componentArea,
+            Input.mousePosition
+        );
     }
 
-    // --- Update Dust Text ---
     void UpdateDustText()
     {
-        if (dustText == null) return;
+        if (dustText == null)
+            return;
 
         int percent = Mathf.RoundToInt(dustAmount * 100f);
+
         dustText.text = "DUST: " + percent + "%";
 
-        if (percent > 50) dustText.color = Color.red;
-        else if (percent > 10) dustText.color = Color.yellow;
-        else dustText.color = Color.green;
+        if (percent > 50)
+            dustText.color = Color.red;
+        else if (percent > 10)
+            dustText.color = Color.yellow;
+        else
+            dustText.color = Color.green;
     }
 
-    // --- Check if Component is Clean ---
     public bool IsClean()
     {
         return dustAmount <= 0.01f;
