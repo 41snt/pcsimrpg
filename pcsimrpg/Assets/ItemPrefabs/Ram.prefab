@@ -13,7 +13,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -5032750463119997116, guid: b52d1f009e19f024889310c329e8e9aa, type: 3}
       propertyPath: Name
-      value: orb
+      value: RAM STICK
       objectReference: {fileID: 0}
     - target: {fileID: 2404460587511848071, guid: b52d1f009e19f024889310c329e8e9aa, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -25,7 +25,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3066313262566381090, guid: b52d1f009e19f024889310c329e8e9aa, type: 3}
       propertyPath: m_Name
-      value: orb
+      value: Ram
       objectReference: {fileID: 0}
     - target: {fileID: 4698986704577078795, guid: b52d1f009e19f024889310c329e8e9aa, type: 3}
       propertyPath: bounceCount

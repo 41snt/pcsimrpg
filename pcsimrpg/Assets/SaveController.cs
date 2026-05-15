@@ -1,3 +1,4 @@
+using System.Collections;
 using Cinemachine;
 using System.Collections.Generic;
 using System.IO;
@@ -13,12 +14,23 @@ public class SaveController : MonoBehaviour
 
     private Chest[] chests;
 
-    private void Start()
+    // =========================
+    // START
+    // =========================
+
+    private IEnumerator Start()
     {
         InitializeComponents();
 
+        // Wait 1 frame so player systems initialize
+        yield return null;
+
         LoadGame();
     }
+
+    // =========================
+    // INITIALIZE
+    // =========================
 
     private void InitializeComponents()
     {
@@ -47,7 +59,7 @@ public class SaveController : MonoBehaviour
     }
 
     // =========================
-    // SAVE
+    // SAVE GAME
     // =========================
 
     public void SaveGame()
@@ -111,7 +123,7 @@ public class SaveController : MonoBehaviour
     }
 
     // =========================
-    // CHESTS
+    // CHEST SAVE
     // =========================
 
     private List<ChestSaveData> GetChestState()
@@ -142,7 +154,7 @@ public class SaveController : MonoBehaviour
     }
 
     // =========================
-    // LOAD
+    // LOAD GAME
     // =========================
 
     public void LoadGame()
@@ -170,8 +182,24 @@ public class SaveController : MonoBehaviour
 
         if (player != null)
         {
-            player.transform.position =
-                saveData.playerPosition;
+            Rigidbody2D rb =
+                player.GetComponent<Rigidbody2D>();
+
+            if (rb != null)
+            {
+                // Stop movement before teleporting
+                rb.velocity = Vector2.zero;
+
+                // Move player safely
+                rb.position =
+                    saveData.playerPosition;
+            }
+            else
+            {
+                // Fallback if no Rigidbody2D
+                player.transform.position =
+                    saveData.playerPosition;
+            }
         }
 
         // =========================
@@ -276,20 +304,41 @@ public class SaveController : MonoBehaviour
     }
 
     // =========================
-    // CREATE SAVE
+    // CREATE NEW SAVE
     // =========================
 
     private void CreateNewSave()
     {
+        // Clear inventory
         inventoryController.SetInventoryItems(
             new List<InventorySaveData>());
 
+        // Clear hotbar
         if (hotbarController != null)
         {
             hotbarController.SetHotbarItems(
                 new List<InventorySaveData>());
         }
 
+        // Reset chests
+        foreach (Chest chest in chests)
+        {
+            if (chest != null)
+            {
+                chest.SetOpened(false);
+            }
+        }
+
+        // Reset quests
+        if (QuestController.Instance != null)
+        {
+            QuestController.Instance.activateQuests.Clear();
+
+            QuestController.Instance.handInQuestIDs.Clear();
+        }
+
         SaveGame();
+
+        Debug.Log("New Save Created");
     }
 }

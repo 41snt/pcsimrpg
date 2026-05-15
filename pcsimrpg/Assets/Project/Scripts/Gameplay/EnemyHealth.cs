@@ -5,8 +5,6 @@ public class EnemyHealth : MonoBehaviour
     public int maxHealth = 50;
     public int currentHealth;
 
-    public bool isAOEEnemy = false;
-
     public EnemySpawnerScript spawner;
 
     private bool isDead = false;
@@ -22,6 +20,7 @@ public class EnemyHealth : MonoBehaviour
         if (isDead) return;
 
         currentHealth -= damage;
+
         Debug.Log("HIT: " + gameObject.name + " HP: " + currentHealth);
 
         if (currentHealth <= 0)
@@ -33,6 +32,7 @@ public class EnemyHealth : MonoBehaviour
     void Die()
     {
         if (isDead) return;
+
         isDead = true;
 
         Debug.Log("💀 Enemy died");

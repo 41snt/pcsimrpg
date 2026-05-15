@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -39,6 +40,10 @@ public class NPC : MonoBehaviour, IInteractable
 
     [Header("Transform Triggers")]
     public TransformTriggerData[] transformTriggers;
+
+    // prevents repeated rotations/moves
+    private HashSet<string> triggeredTransforms =
+        new HashSet<string>();
 
     private enum QuestState
     {
@@ -186,6 +191,18 @@ public class NPC : MonoBehaviour, IInteractable
             if (trigger.dialogueIndex !=
                 dialogueIndex)
                 continue;
+
+            string triggerID =
+                trigger.targetObject.name +
+                "_" +
+                trigger.dialogueIndex;
+
+            // already triggered
+            if (triggeredTransforms.Contains(triggerID))
+                continue;
+
+            // save trigger
+            triggeredTransforms.Add(triggerID);
 
             // ROTATE OBJECT
             if (trigger.rotateObject)
