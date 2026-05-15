@@ -3,23 +3,29 @@ using System.Collections;
 
 public class EnemySpawnerScript : MonoBehaviour
 {
-    [Header("Continuous Spawning (New Enemies)")]
+    [Header("Continuous Spawning")]
     public GameObject enemyPrefab;
-    public Transform spawnPoint;
-    public float spawnInterval = 5.0f;
 
-    [Header("Respawn Settings (Dead Enemies)")]
-    public float respawnDelay = 10.0f;
+    public Transform spawnPoint;
+
+    public float spawnInterval = 5f;
+
+    [Header("Respawn Settings")]
+    public float respawnDelay = 10f;
 
     private void Start()
     {
         if (enemyPrefab != null)
         {
-            StartCoroutine(ContinuousSpawnRoutine());
+            StartCoroutine(
+                ContinuousSpawnRoutine()
+            );
         }
         else
         {
-            Debug.LogError("Please drag the Enemy Prefab into the Spawner slot!");
+            Debug.LogError(
+                "Enemy Prefab Missing!"
+            );
         }
     }
 
@@ -28,44 +34,79 @@ public class EnemySpawnerScript : MonoBehaviour
         while (true)
         {
             SpawnNewEnemy();
-            yield return new WaitForSeconds(spawnInterval);
+
+            yield return new WaitForSeconds(
+                spawnInterval
+            );
         }
     }
 
     void SpawnNewEnemy()
     {
-        if (enemyPrefab != null && spawnPoint != null)
+        if (enemyPrefab == null)
         {
-            GameObject newEnemy = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
+            Debug.LogError(
+                "Enemy Prefab Missing!"
+            );
 
-            EnemyHealth health = newEnemy.GetComponent<EnemyHealth>();
+            return;
+        }
 
-            if (health != null)
-            {
-                health.spawner = this;
+        if (spawnPoint == null)
+        {
+            Debug.LogError(
+                "Spawn Point Missing!"
+            );
 
-                health.currentHealth = health.maxHealth;
-            }
+            return;
+        }
+
+        GameObject newEnemy = Instantiate(
+            enemyPrefab,
+            spawnPoint.position,
+            Quaternion.identity
+        );
+
+        EnemyHealth health =
+            newEnemy.GetComponent<EnemyHealth>();
+
+        if (health != null)
+        {
+            health.spawner = this;
+
+            health.currentHealth =
+                health.maxHealth;
         }
     }
 
-    public void RequestRespawn(GameObject enemyToRespawn)
+    public void RequestRespawn(
+        GameObject enemyToRespawn
+    )
     {
-        StartCoroutine(RespawnTimer(enemyToRespawn));
+        StartCoroutine(
+            RespawnTimer(enemyToRespawn)
+        );
     }
 
     IEnumerator RespawnTimer(GameObject enemy)
     {
-        yield return new WaitForSeconds(respawnDelay);
+        yield return new WaitForSeconds(
+            respawnDelay
+        );
 
-        if (enemy != null && spawnPoint != null)
+        if (enemy != null &&
+            spawnPoint != null)
         {
-            enemy.transform.position = spawnPoint.position;
+            enemy.transform.position =
+                spawnPoint.position;
 
-            EnemyHealth health = enemy.GetComponent<EnemyHealth>();
+            EnemyHealth health =
+                enemy.GetComponent<EnemyHealth>();
+
             if (health != null)
             {
-                health.currentHealth = health.maxHealth;
+                health.currentHealth =
+                    health.maxHealth;
             }
 
             enemy.SetActive(true);

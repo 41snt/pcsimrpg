@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e1c5a9e387f12846a6554468c3ebdb3, type: 3}
+  m_Name: Charles Babbage
+  m_EditorClassIdentifier: 
+  npcName: Charles Babbage
+  npcPortrait: {fileID: 0}
+  dialogueLines:
+  - This way leads to {Area Name}
+  - But please save this region and defeat him please.
+  - Thank u so much
+  - PLEASEEE SIR
+  - You have doomed us all.
+  - 
+  autoProgressLines: 010100
+  endDialogueLines: 000001000100
+  autoProgressDelay: 1.5
+  typingSpeed: 0.05
+  voiceSound: {fileID: 0}
+  voicePitch: 1
+  choices:
+  - dialogueIndex: 2
+    choices:
+    - I got this
+    - Why would I?
+    nextDialogueIndexes: 0200000003000000
+    givesQuest: 
+    triggersCutscene: 
+    cutsceneNames: []
+  - dialogueIndex: 3
+    choices:
+    - Okay Fine
+    - No.
+    nextDialogueIndexes: 0200000004000000
+    givesQuest: 
+    triggersCutscene: 
+    cutsceneNames: []
+  questInProgressIndex: 0
+  questCompletedIndex: 0
+  quest: {fileID: 11400000, guid: ee5933dabc1d7e04686aa6d05386a289, type: 2}
+  rotateTriggers:
+  - dialogueIndex: 2
+    rotationAmount: {x: 0, y: 0, z: 90}

@@ -2,19 +2,19 @@ using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
 {
-    public int maxHealth = 50;
+    [Header("Enemy Health")]
+    public int maxHealth = 500;
+
     public int currentHealth;
 
-    public bool isAOEEnemy = false;
-
+    [HideInInspector]
     public EnemySpawnerScript spawner;
 
     private bool isDead = false;
 
-    void OnEnable()
+    void Start()
     {
         currentHealth = maxHealth;
-        isDead = false;
     }
 
     public void TakeDamage(int damage)
@@ -22,7 +22,10 @@ public class EnemyHealth : MonoBehaviour
         if (isDead) return;
 
         currentHealth -= damage;
-        Debug.Log("HIT: " + gameObject.name + " HP: " + currentHealth);
+
+        Debug.Log(
+            "Enemy HP: " + currentHealth
+        );
 
         if (currentHealth <= 0)
         {
@@ -33,15 +36,11 @@ public class EnemyHealth : MonoBehaviour
     void Die()
     {
         if (isDead) return;
+
         isDead = true;
 
-        Debug.Log("💀 Enemy died");
+        Debug.Log("💀 Enemy Destroyed!");
 
-        if (spawner != null)
-        {
-            spawner.RequestRespawn(gameObject);
-        }
-
-        gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 }

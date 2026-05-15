@@ -5,26 +5,34 @@ using UnityEngine.UI;
 public class ActionButtonController : MonoBehaviour
 {
     [Header("UI")]
-    [SerializeField] private GameObject attackLogo;
-    [SerializeField] private GameObject interactLogo;
+    [SerializeField]
+    private GameObject attackLogo;
+
+    [SerializeField]
+    private GameObject interactLogo;
 
     [Header("References")]
-    [SerializeField] private PlayerInteraction playerInteraction;
-    [SerializeField] private PlayerMeleeAttack playerAttack;
+    [SerializeField]
+    private PlayerInteraction playerInteraction;
+
+    [SerializeField]
+    private PlayerMeleeAttack playerAttack;
 
     private Button button;
 
     private void Awake()
     {
         button = GetComponent<Button>();
-        button.onClick.AddListener(OnActionPressed);
+
+        button.onClick.AddListener(
+            OnActionPressed
+        );
 
         UpdateButtonMode();
     }
 
     private void Update()
     {
-        // Check every frame if player is near an interactable object
         UpdateButtonMode();
     }
 
@@ -40,6 +48,7 @@ public class ActionButtonController : MonoBehaviour
     {
         if (!attackLogo.activeSelf)
             attackLogo.SetActive(true);
+
         if (interactLogo.activeSelf)
             interactLogo.SetActive(false);
     }
@@ -48,6 +57,7 @@ public class ActionButtonController : MonoBehaviour
     {
         if (attackLogo.activeSelf)
             attackLogo.SetActive(false);
+
         if (!interactLogo.activeSelf)
             interactLogo.SetActive(true);
     }
@@ -60,7 +70,10 @@ public class ActionButtonController : MonoBehaviour
         }
         else
         {
-            playerAttack.Attack();
+            if (playerAttack != null)
+            {
+                playerAttack.Attack();
+            }
         }
     }
 }

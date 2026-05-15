@@ -3,51 +3,73 @@ using UnityEngine;
 public class PlayerMeleeAttack : MonoBehaviour
 {
     [Header("Attack Settings")]
-    public int attackDamage = 25;
-    public float attackRange = 1.5f;
+    public Transform attackPoint;
 
-    [Header("References")]
-    public WeaponDirection weapon;
+    public float attackRange = 1f;
+
+    public LayerMask enemyLayers;
+
+    public int attackDamage = 25;
+
+    [Header("Weapon Swing")]
+    public WeaponDirection weaponSwing;
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Attack();
+        }
+    }
 
     public void Attack()
     {
-        // Swing weapon
-        if (weapon != null)
+        // PLAY WEAPON SWING
+        if (weaponSwing != null)
         {
-            weapon.Swing();
+            weaponSwing.Swing();
         }
 
-        // Detect enemies
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange);
-
-        bool hitEnemy = false;
-
-        foreach (Collider2D hit in hits)
+        if (attackPoint == null)
         {
-            EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
+            Debug.LogError(
+                "AttackPoint is NOT assigned!"
+            );
 
-            if (enemy != null)
+            return;
+        }
+
+        Collider2D[] hitEnemies =
+            Physics2D.OverlapCircleAll(
+                attackPoint.position,
+                attackRange,
+                enemyLayers
+            );
+
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            EnemyHealth enemyHealth =
+                enemy.GetComponent<EnemyHealth>();
+
+            if (enemyHealth != null)
             {
-                enemy.TakeDamage(attackDamage);
-                Debug.Log("Enemy Hit!");
-                hitEnemy = true;
+                enemyHealth.TakeDamage(
+                    attackDamage
+                );
             }
         }
-
-        if (!hitEnemy)
-        {
-            Debug.Log("No enemy in range.");
-        }
     }
 
-    public void Interact()
+    void OnDrawGizmosSelected()
     {
-        Attack();
-    }
+        if (attackPoint == null)
+            return;
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.color = Color.red;
+
+        Gizmos.DrawWireSphere(
+            attackPoint.position,
+            attackRange
+        );
     }
 }
