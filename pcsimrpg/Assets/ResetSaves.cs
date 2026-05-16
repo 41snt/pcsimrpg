@@ -1,6 +1,5 @@
 using System.IO;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -8,40 +7,48 @@ using UnityEditor;
 
 public class ResetSaves : MonoBehaviour
 {
-    private string saveLocation;
-
-    private void Start()
+    public void ResetSaveData()
     {
-        saveLocation =
+        string saveLocation =
             Path.Combine(
                 Application.persistentDataPath,
                 "saveData.json");
-    }
 
-    // BUTTON FUNCTION
-    public void ResetSaveData()
-    {
+        // Prevent autosave
+        SaveController.isResettingSave = true;
+
         // Delete save file
         if (File.Exists(saveLocation))
         {
             File.Delete(saveLocation);
 
-            Debug.Log("Save file deleted.");
+            Debug.Log("SAVE FILE DELETED");
+        }
+        else
+        {
+            Debug.Log("NO SAVE FILE FOUND");
         }
 
-        // Clear PlayerPrefs
+        // Clear prefs
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
 
-        Debug.Log("All progress reset.");
+        Debug.Log("PLAYER PREFS CLEARED");
 
-        // STOP PLAY MODE IN UNITY EDITOR
+        // VERIFY DELETE
+        if (!File.Exists(saveLocation))
+        {
+            Debug.Log("SAVE DELETE SUCCESS");
+        }
+        else
+        {
+            Debug.LogError("SAVE STILL EXISTS");
+        }
+
 #if UNITY_EDITOR
+
         EditorApplication.isPlaying = false;
-#else
-        // If built game, restart current scene
-        SceneManager.LoadScene(
-            SceneManager.GetActiveScene().buildIndex);
+
 #endif
     }
 }

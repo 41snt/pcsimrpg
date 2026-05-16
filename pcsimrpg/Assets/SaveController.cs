@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class SaveController : MonoBehaviour
 {
+    public static bool isResettingSave = false;
+
     private string saveLocation;
 
     private InventoryController inventoryController;
@@ -55,6 +57,9 @@ public class SaveController : MonoBehaviour
 
     private void OnApplicationQuit()
     {
+        if (isResettingSave)
+            return;
+
         SaveGame();
     }
 
@@ -187,16 +192,13 @@ public class SaveController : MonoBehaviour
 
             if (rb != null)
             {
-                // Stop movement before teleporting
                 rb.velocity = Vector2.zero;
 
-                // Move player safely
                 rb.position =
                     saveData.playerPosition;
             }
             else
             {
-                // Fallback if no Rigidbody2D
                 player.transform.position =
                     saveData.playerPosition;
             }
@@ -309,18 +311,15 @@ public class SaveController : MonoBehaviour
 
     private void CreateNewSave()
     {
-        // Clear inventory
         inventoryController.SetInventoryItems(
             new List<InventorySaveData>());
 
-        // Clear hotbar
         if (hotbarController != null)
         {
             hotbarController.SetHotbarItems(
                 new List<InventorySaveData>());
         }
 
-        // Reset chests
         foreach (Chest chest in chests)
         {
             if (chest != null)
@@ -329,7 +328,6 @@ public class SaveController : MonoBehaviour
             }
         }
 
-        // Reset quests
         if (QuestController.Instance != null)
         {
             QuestController.Instance.activateQuests.Clear();
