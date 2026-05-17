@@ -19,12 +19,20 @@ public class ItemDragHandler : MonoBehaviour,
     // MOBILE SELECTED ITEM
     public static ItemDragHandler selectedItem;
 
-    void Start()
+    private void Start()
     {
+        // Get required components
         canvasGroup = GetComponent<CanvasGroup>();
         rectTransform = GetComponent<RectTransform>();
 
-        inventoryController = InventoryController.instance;
+        // Ensure a CanvasGroup exists
+        if (canvasGroup == null)
+        {
+            canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        }
+
+        // Use the correct singleton property name
+        inventoryController = InventoryController.Instance;
     }
 
     // =========================
@@ -46,6 +54,7 @@ public class ItemDragHandler : MonoBehaviour,
     {
         originalParent = transform.parent;
 
+        // Move to root canvas while dragging
         transform.SetParent(transform.root);
 
         canvasGroup.blocksRaycasts = false;
@@ -82,6 +91,13 @@ public class ItemDragHandler : MonoBehaviour,
         Slot originalSlot =
             originalParent.GetComponent<Slot>();
 
+        // Safety check
+        if (originalSlot == null)
+        {
+            ReturnToOriginalSlot();
+            return;
+        }
+
         // =========================
         // DROP INTO SLOT
         // =========================
@@ -104,37 +120,43 @@ public class ItemDragHandler : MonoBehaviour,
                 Item targetItem =
                     dropSlot.currentItem.GetComponent<Item>();
 
-                // STACK ITEMS
-                if (draggedItem.ID == targetItem.ID)
+                if (draggedItem != null && targetItem != null)
                 {
-                    targetItem.AddToStack(
-                        draggedItem.quantity);
+                    // STACK ITEMS
+                    if (draggedItem.ID == targetItem.ID)
+                    {
+                        targetItem.AddToStack(
+                            draggedItem.quantity);
 
-                    originalSlot.currentItem = null;
+                        originalSlot.currentItem = null;
 
-                    Destroy(gameObject);
+                        Destroy(gameObject);
 
-                    inventoryController.RebuildItemCounts();
+                        if (inventoryController != null)
+                        {
+                            inventoryController.RebuildItemCounts();
+                        }
 
-                    return;
-                }
-                else
-                {
-                    // SWAP ITEMS
-                    GameObject targetObject =
-                        dropSlot.currentItem;
+                        return;
+                    }
+                    else
+                    {
+                        // SWAP ITEMS
+                        GameObject targetObject =
+                            dropSlot.currentItem;
 
-                    targetObject.transform.SetParent(
-                        originalSlot.transform);
+                        targetObject.transform.SetParent(
+                            originalSlot.transform);
 
-                    targetObject.GetComponent<RectTransform>()
-                        .anchoredPosition = Vector2.zero;
+                        targetObject.GetComponent<RectTransform>()
+                            .anchoredPosition = Vector2.zero;
 
-                    targetObject.transform.localScale =
-                        Vector3.one;
+                        targetObject.transform.localScale =
+                            Vector3.one;
 
-                    originalSlot.currentItem =
-                        targetObject;
+                        originalSlot.currentItem =
+                            targetObject;
+                    }
                 }
             }
             else
@@ -152,7 +174,10 @@ public class ItemDragHandler : MonoBehaviour,
 
             dropSlot.currentItem = gameObject;
 
-            inventoryController.RebuildItemCounts();
+            if (inventoryController != null)
+            {
+                inventoryController.RebuildItemCounts();
+            }
 
             return;
         }
@@ -171,8 +196,11 @@ public class ItemDragHandler : MonoBehaviour,
         ReturnToOriginalSlot();
     }
 
-    void ReturnToOriginalSlot()
+    private void ReturnToOriginalSlot()
     {
+        if (originalParent == null)
+            return;
+
         transform.SetParent(originalParent);
 
         rectTransform.anchoredPosition =
@@ -181,11 +209,18 @@ public class ItemDragHandler : MonoBehaviour,
         transform.localScale = Vector3.one;
     }
 
-    bool IsWithinInventory(Vector2 mousePosition)
+    private bool IsWithinInventory(Vector2 mousePosition)
     {
+        if (originalParent == null ||
+            originalParent.parent == null)
+            return false;
+
         RectTransform inventoryRect =
             originalParent.parent
             .GetComponent<RectTransform>();
+
+        if (inventoryRect == null)
+            return false;
 
         return RectTransformUtility
             .RectangleContainsScreenPoint(
@@ -197,7 +232,7 @@ public class ItemDragHandler : MonoBehaviour,
     // DROP ITEM
     // =========================
 
-    void DropItem(Slot originalSlot)
+    private void DropItem(Slot originalSlot)
     {
         Item item = GetComponent<Item>();
 
@@ -210,7 +245,10 @@ public class ItemDragHandler : MonoBehaviour,
             ?.transform;
 
         if (playerTransform == null)
+        {
+            ReturnToOriginalSlot();
             return;
+        }
 
         // RANDOM DROP POSITION
         Vector2 dropOffset =
@@ -247,15 +285,20 @@ public class ItemDragHandler : MonoBehaviour,
                 bounce.StartBounce();
             }
 
-            inventoryController.RebuildItemCounts();
+            if (inventoryController != null)
+            {
+                inventoryController.RebuildItemCounts();
+            }
 
             ReturnToOriginalSlot();
-
             return;
         }
 
         // REMOVE FROM SLOT
-        originalSlot.currentItem = null;
+        if (originalSlot != null)
+        {
+            originalSlot.currentItem = null;
+        }
 
         // DROP ENTIRE ITEM
         transform.SetParent(null);
@@ -272,7 +315,10 @@ public class ItemDragHandler : MonoBehaviour,
             itemBounce.StartBounce();
         }
 
-        inventoryController.RebuildItemCounts();
+        if (inventoryController != null)
+        {
+            inventoryController.RebuildItemCounts();
+        }
     }
 
     // =========================
@@ -293,6 +339,10 @@ public class ItemDragHandler : MonoBehaviour,
             item.quantity / 2;
 
         if (splitAmount <= 0)
+            return;
+
+        // Ensure inventory controller exists
+        if (inventoryController == null)
             return;
 
         // REMOVE HALF
@@ -328,12 +378,11 @@ public class ItemDragHandler : MonoBehaviour,
                 slot.currentItem = newItem;
 
                 inventoryController.RebuildItemCounts();
-
                 return;
             }
         }
 
-        // NO SPACE
+        // NO SPACE - restore original stack
         item.AddToStack(splitAmount);
 
         Destroy(newItem);

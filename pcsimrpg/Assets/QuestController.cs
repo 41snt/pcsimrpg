@@ -15,20 +15,24 @@ public class QuestController : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-
-            DontDestroyOnLoad(gameObject);
-        }
-        else
+        // Singleton check
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
 
-        questUI =
-            FindObjectOfType<QuestUI>();
+        Instance = this;
+
+        // Ensure this GameObject is a root object before calling
+        // DontDestroyOnLoad (required by Unity)
+        transform.SetParent(null);
+
+        // Persist across scene loads
+        DontDestroyOnLoad(gameObject);
+
+        // Find QuestUI if it exists in the current scene
+        questUI = FindObjectOfType<QuestUI>();
     }
 
     private void Start()
@@ -40,6 +44,16 @@ public class QuestController : MonoBehaviour
         }
 
         RefreshQuestUI();
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe to avoid dangling event references
+        if (InventoryController.Instance != null)
+        {
+            InventoryController.Instance.OnInventoryChanged -=
+                CheckInventoryForQuests;
+        }
     }
 
     // =========================
@@ -61,7 +75,6 @@ public class QuestController : MonoBehaviour
             new Quest.QuestProgress(quest));
 
         CheckInventoryForQuests();
-
         RefreshQuestUI();
     }
 
@@ -115,27 +128,32 @@ public class QuestController : MonoBehaviour
         if (quest == null)
             return;
 
-        // REMOVE REQUIRED ITEMS
-        foreach (var objective in quest.objectives)
+        // Remove required items from inventory
+        if (InventoryController.Instance != null)
         {
-            int itemID;
-
-            if (int.TryParse(
-                objective.objectiveID,
-                out itemID))
+            foreach (var objective in quest.objectives)
             {
-                InventoryController.Instance
-                    .RemoveItemsFromInventory(
-                        itemID,
-                        objective.requiredAmount);
+                int itemID;
+
+                if (int.TryParse(
+                    objective.objectiveID,
+                    out itemID))
+                {
+                    InventoryController.Instance
+                        .RemoveItemsFromInventory(
+                            itemID,
+                            objective.requiredAmount);
+                }
             }
         }
 
+        // Mark as handed in
         if (!handInQuestIDs.Contains(questID))
         {
             handInQuestIDs.Add(questID);
         }
 
+        // Remove from active quests
         activateQuests.Remove(quest);
 
         RefreshQuestUI();
@@ -157,7 +175,6 @@ public class QuestController : MonoBehaviour
         }
 
         CheckInventoryForQuests();
-
         RefreshQuestUI();
     }
 
@@ -216,10 +233,10 @@ public class QuestController : MonoBehaviour
 
     public void RefreshQuestUI()
     {
+        // Re-find QuestUI after scene changes
         if (questUI == null)
         {
-            questUI =
-                FindObjectOfType<QuestUI>();
+            questUI = FindObjectOfType<QuestUI>();
         }
 
         if (questUI != null)
