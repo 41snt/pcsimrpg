@@ -1,53 +1,51 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Chest : MonoBehaviour, IInteractable
 {
-    public bool IsOpened { get; private set; }
-    public string ChestID { get; private set; }
+    [Header("Main PC View")]
+    public GameObject masterPCPanel;
 
-    public GameObject itemPrefab; // Item that chest drops
-    public Sprite openedSprite;
+    [Header("Part Sub-Panels")]
+    public GameObject cpuPanel;
+    public GameObject ramPanel;
+    public GameObject gpuPanel;
+    public GameObject moboPanel;
+    public GameObject psuPanel;
+    public GameObject hddPanel;
+    public GameObject ssdPanel;
+    public GameObject coolerPanel; 
 
-    // Start is called before the first frame update
-    void Start()
+    public void Interact() => OpenMainPanel();
+
+    public void OpenMainPanel() => SwitchToPanel(masterPCPanel);
+
+    // Button Functions linked to UI
+    public void OpenCPU() => SwitchToPanel(cpuPanel);
+    public void OpenRAM() => SwitchToPanel(ramPanel);
+    public void OpenGPU() => SwitchToPanel(gpuPanel);
+    public void OpenMOBO() => SwitchToPanel(moboPanel);
+    public void OpenPSU() => SwitchToPanel(psuPanel);
+    public void OpenHDD() => SwitchToPanel(hddPanel);
+    public void OpenSSD() => SwitchToPanel(ssdPanel);
+    public void OpenCooler() => SwitchToPanel(coolerPanel); 
+
+    private void SwitchToPanel(GameObject target)
     {
-        ChestID ??= GlobalHelper.GenerateUniqueID(gameObject);
+        // 1. Hide every panel in the list
+        if (masterPCPanel) masterPCPanel.SetActive(false);
+        if (cpuPanel) cpuPanel.SetActive(false);
+        if (ramPanel) ramPanel.SetActive(false);
+        if (gpuPanel) gpuPanel.SetActive(false);
+        if (moboPanel) moboPanel.SetActive(false);
+        if (psuPanel) psuPanel.SetActive(false);
+        if (hddPanel) hddPanel.SetActive(false);
+        if (ssdPanel) ssdPanel.SetActive(false);
+        if (coolerPanel) coolerPanel.SetActive(false);
+
+        // 2. Show the one we want
+        if (target != null)
+            target.SetActive(true);
     }
 
-    public bool CanInteract()
-    {
-        return !IsOpened;
-    }
-
-    public void Interact()
-    {
-        if (!CanInteract()) return;
-
-        OpenChest();
-    }
-
-    private void OpenChest()
-    {
-        SetOpened(true);
-
-        // Drop Item
-        if (itemPrefab)
-        {
-            GameObject droppedItem = Instantiate(
-                itemPrefab,
-                transform.position + Vector3.down,
-                Quaternion.identity
-            );
-        }
-    }
-
-    public void SetOpened(bool opened)
-    {
-        if (IsOpened = opened)
-        {
-            GetComponent<SpriteRenderer>().sprite = openedSprite;
-        }
-    }
+    public void CloseAll() => SwitchToPanel(null);
 }

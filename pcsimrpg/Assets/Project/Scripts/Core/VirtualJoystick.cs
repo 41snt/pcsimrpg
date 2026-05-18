@@ -1,12 +1,20 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
+public class VirtualJoystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
+    public RectTransform joystickBase;
+    public RectTransform joystickKnob;
+    public float maxDistance = 75f;
+
     private Vector2 inputVector;
 
-    public RectTransform joystickBackground;
-    public RectTransform joystickHandle;
+    public Vector2 GetInput()
+    {
+        return inputVector;
+    }
 
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -16,46 +24,21 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, I
     public void OnDrag(PointerEventData eventData)
     {
         Vector2 position;
-
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            joystickBackground,
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            joystickBase,
             eventData.position,
             eventData.pressEventCamera,
-            out position))
-        {
-            position.x = (position.x / joystickBackground.sizeDelta.x) * 2;
-            position.y = (position.y / joystickBackground.sizeDelta.y) * 2;
+            out position
+        );
 
-            inputVector = new Vector2(position.x, position.y);
-
-            if (inputVector.magnitude > 1)
-                inputVector = inputVector.normalized;
-
-            joystickHandle.anchoredPosition = new Vector2(
-                inputVector.x * (joystickBackground.sizeDelta.x / 3),
-                inputVector.y * (joystickBackground.sizeDelta.y / 3));
-        }
+        position = Vector2.ClampMagnitude(position, maxDistance);
+        joystickKnob.anchoredPosition = position;
+        inputVector = position / maxDistance;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        joystickKnob.anchoredPosition = Vector2.zero;
         inputVector = Vector2.zero;
-        joystickHandle.anchoredPosition = Vector2.zero;
-    }
-
-    public Vector2 GetInput()
-    {
-        // Keyboard WASD input
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-
-        Vector2 keyboardInput = new Vector2(horizontal, vertical).normalized;
-
-        // If keyboard is being used, return keyboard input
-        if (keyboardInput != Vector2.zero)
-            return keyboardInput;
-
-        // Otherwise return joystick input
-        return inputVector;
     }
 }

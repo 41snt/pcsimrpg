@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,25 +12,25 @@ public class ActionButtonController : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private PlayerInteraction playerInteraction;
-    [SerializeField] private PlayerMeleeAttack playerAttack;
 
     private Button button;
 
     private void Awake()
     {
         button = GetComponent<Button>();
-        button.onClick.AddListener(OnActionPressed);
 
-        UpdateButtonMode();
+        if (attackLogo == null || interactLogo == null || playerInteraction == null)
+        {
+            Debug.LogError("ActionButtonController is missing references.");
+            enabled = false;
+            return;
+        }
+
+        button.onClick.AddListener(OnActionPressed);
+        SetAttackMode();
     }
 
     private void Update()
-    {
-        // Check every frame if player is near an interactable object
-        UpdateButtonMode();
-    }
-
-    private void UpdateButtonMode()
     {
         if (playerInteraction.Current != null)
             SetInteractMode();
@@ -39,17 +41,19 @@ public class ActionButtonController : MonoBehaviour
     private void SetAttackMode()
     {
         if (!attackLogo.activeSelf)
+        {
             attackLogo.SetActive(true);
-        if (interactLogo.activeSelf)
             interactLogo.SetActive(false);
+        }
     }
 
     private void SetInteractMode()
     {
-        if (attackLogo.activeSelf)
-            attackLogo.SetActive(false);
         if (!interactLogo.activeSelf)
+        {
             interactLogo.SetActive(true);
+            attackLogo.SetActive(false);
+        }
     }
 
     private void OnActionPressed()
@@ -60,7 +64,13 @@ public class ActionButtonController : MonoBehaviour
         }
         else
         {
-            playerAttack.Attack();
+            Attack();
         }
+    }
+
+    private void Attack()
+    {
+        Debug.Log("Player attacks");
+        // Hook into combat later
     }
 }
