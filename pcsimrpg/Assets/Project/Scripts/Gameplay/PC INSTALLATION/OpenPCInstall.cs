@@ -1,10 +1,16 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class OpenPCInstall : MonoBehaviour
 {
-    public void OpenScene()
+    public GameObject pcInstallPanel;
+
+    public void OpenPanel()
     {
-        SceneManager.LoadScene("PCInstallation");
+        pcInstallPanel.SetActive(true);
+    }
+
+    public void ClosePanel()
+    {
+        pcInstallPanel.SetActive(false);
     }
 }
