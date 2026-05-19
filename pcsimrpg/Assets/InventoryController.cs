@@ -31,18 +31,170 @@ public class InventoryController : MonoBehaviour
          } */
     }
 
+<<<<<<< Updated upstream
+=======
+    public static InventoryController Instance => instance;
+
+    private Dictionary<int, int> itemsCountCache =
+        new Dictionary<int, int>();
+
+    public event Action OnInventoryChanged;
+
+    private void Awake()
+    {
+        if (instance != null &&
+            instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+    }
+
+    private void Start()
+    {
+        itemDictionary =
+            FindObjectOfType<ItemDictionary>();
+
+        // CREATE SLOTS
+        if (inventoryPanel.transform.childCount == 0)
+        {
+            for (int i = 0;
+                i < slotCount;
+                i++)
+            {
+                GameObject slot =
+                    Instantiate(
+                        slotPrefab,
+                        inventoryPanel.transform);
+
+                slot.transform.localScale =
+                    Vector3.one;
+            }
+        }
+
+        ForceCleanInventory();
+
+        RebuildItemCounts();
+    }
+
+    // =========================
+    // CLEAN INVENTORY
+    // =========================
+
+    public void ForceCleanInventory()
+    {
+        foreach (Transform slotTransform
+            in inventoryPanel.transform)
+        {
+            Slot slot =
+                slotTransform.GetComponent<Slot>();
+
+            if (slot == null)
+                continue;
+
+            if (slot.currentItem == null)
+                continue;
+
+            Item item =
+                slot.currentItem.GetComponent<Item>();
+
+            if (item == null)
+            {
+                Destroy(slot.currentItem);
+
+                slot.currentItem = null;
+            }
+        }
+
+        RebuildItemCounts();
+    }
+
+    // =========================
+    // ITEM COUNTS
+    // =========================
+
+    public void RebuildItemCounts()
+    {
+        itemsCountCache.Clear();
+
+        foreach (Transform slotTransform
+            in inventoryPanel.transform)
+        {
+            Slot slot =
+                slotTransform.GetComponent<Slot>();
+
+            if (slot == null)
+                continue;
+
+            if (slot.currentItem == null)
+                continue;
+
+            Item item =
+                slot.currentItem.GetComponent<Item>();
+
+            if (item == null)
+                continue;
+
+            if (!itemsCountCache.ContainsKey(item.ID))
+            {
+                itemsCountCache[item.ID] = 0;
+            }
+
+            itemsCountCache[item.ID] +=
+                item.quantity;
+        }
+
+        OnInventoryChanged?.Invoke();
+    }
+
+    public Dictionary<int, int> GetItemCounts()
+    {
+        return itemsCountCache;
+    }
+
+    // =========================
+    // ADD ITEM
+    // =========================
+>>>>>>> Stashed changes
 
     public bool AddItem(GameObject itemPrefab)
     {
         //Look for empty slot
         foreach (Transform slotTransform in inventoryPanel.transform)
         {
+<<<<<<< Updated upstream
             Slot slot = slotTransform.GetComponent<Slot>();
             if (slot != null && slot.currentItem == null)
             {
                 GameObject newItem = Instantiate(itemPrefab, slotTransform);
                 newItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
                 slot.currentItem = newItem;
+=======
+            Slot slot =
+                slotTransform.GetComponent<Slot>();
+
+            if (slot == null)
+                continue;
+
+            if (slot.currentItem == null)
+                continue;
+
+            Item slotItem =
+                slot.currentItem.GetComponent<Item>();
+
+            if (slotItem == null)
+                continue;
+
+            if (slotItem.ID ==
+                itemToAdd.ID)
+            {
+                slotItem.AddToStack();
+
+                RebuildItemCounts();
+
+>>>>>>> Stashed changes
                 return true;
             }
         }
