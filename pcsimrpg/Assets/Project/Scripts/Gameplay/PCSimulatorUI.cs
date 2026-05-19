@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Chest : MonoBehaviour, IInteractable
+public class PCSimulatorUI : MonoBehaviour, IInteractable
 {
     [Header("Main PC View")]
     public GameObject masterPCPanel;
@@ -13,7 +13,7 @@ public class Chest : MonoBehaviour, IInteractable
     public GameObject psuPanel;
     public GameObject hddPanel;
     public GameObject ssdPanel;
-    public GameObject coolerPanel; 
+    public GameObject coolerPanel;
 
     public void Interact() => OpenMainPanel();
 
@@ -27,11 +27,11 @@ public class Chest : MonoBehaviour, IInteractable
     public void OpenPSU() => SwitchToPanel(psuPanel);
     public void OpenHDD() => SwitchToPanel(hddPanel);
     public void OpenSSD() => SwitchToPanel(ssdPanel);
-    public void OpenCooler() => SwitchToPanel(coolerPanel); 
+    public void OpenCooler() => SwitchToPanel(coolerPanel);
 
     private void SwitchToPanel(GameObject target)
     {
-        // 1. Hide every panel in the list
+        // Hide all panels
         if (masterPCPanel) masterPCPanel.SetActive(false);
         if (cpuPanel) cpuPanel.SetActive(false);
         if (ramPanel) ramPanel.SetActive(false);
@@ -42,7 +42,7 @@ public class Chest : MonoBehaviour, IInteractable
         if (ssdPanel) ssdPanel.SetActive(false);
         if (coolerPanel) coolerPanel.SetActive(false);
 
-        // 2. Show the one we want
+        // Show selected panel
         if (target != null)
             target.SetActive(true);
     }

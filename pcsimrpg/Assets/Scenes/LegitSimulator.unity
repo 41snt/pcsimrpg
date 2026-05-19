@@ -29353,7 +29353,7 @@ GameObject:
   - component: {fileID: 1024355381}
   - component: {fileID: 1024355380}
   m_Layer: 0
-  m_Name: Chest
+  m_Name: PCSimulatorUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29371,8 +29371,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca255219bb4b61141bfeb1861e470962, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiPanel: {fileID: 0}
-  playerNearby: 0
 --- !u!61 &1024355381
 BoxCollider2D:
   m_ObjectHideFlags: 0
